@@ -695,28 +695,45 @@ export default {
   padding-left: 50px !important;
 }
 
+:deep(.el-select .el-input__inner) {
+  padding-left: 0 !important;
+}
+
+:deep(.el-select__placeholder) {
+  color: #666;
+}
+
+:deep(.el-select .el-select__caret) {
+  color: #00ffff;
+}
+
 :deep(.el-select-dropdown) {
-  background: rgba(26, 26, 46, 0.95);
-  backdrop-filter: blur(10px);
+  background: rgba(10, 14, 39, 0.98) !important;
+  backdrop-filter: blur(20px);
   border: 2px solid rgba(0, 255, 255, 0.3);
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 :deep(.el-select-dropdown__item) {
-  color: #ffffff;
+  color: #ffffff !important;
   transition: all 0.2s ease;
+  background: transparent !important;
 }
 
 :deep(.el-select-dropdown__item:hover) {
-  background: rgba(0, 255, 255, 0.15);
-  color: #00ffff;
+  background: rgba(0, 255, 255, 0.15) !important;
+  color: #00ffff !important;
 }
 
 :deep(.el-select-dropdown__item.selected) {
-  background: rgba(0, 255, 255, 0.25);
-  color: #00ffff;
+  background: rgba(0, 255, 255, 0.25) !important;
+  color: #00ffff !important;
   font-weight: 600;
+}
+
+:deep(.el-select-dropdown__item.is-hovering) {
+  background: rgba(0, 255, 255, 0.15) !important;
 }
 
 @media (max-width: 480px) {
