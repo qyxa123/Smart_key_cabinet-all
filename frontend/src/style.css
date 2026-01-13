@@ -7,12 +7,50 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+  background: #0a0e27;
   color: #ffffff;
   height: 100vh;
   overflow: hidden;
   position: fixed;
   width: 100%;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridMove 20s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes gridMove {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, rgba(0, 128, 255, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* 背景动画粒子 */
@@ -23,62 +61,71 @@ body {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
+  overflow: hidden;
 }
 
 .particle {
   position: absolute;
-  width: 4px;
-  height: 4px;
+  width: 3px;
+  height: 3px;
   background: #00ffff;
   border-radius: 50%;
+  box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
   animation: float 6s infinite linear;
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 .particle:nth-child(1) {
   left: 10%;
   animation-delay: 0s;
   animation-duration: 8s;
+  box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
 }
 
 .particle:nth-child(2) {
-  left: 20%;
+  left: 25%;
   animation-delay: 2s;
   animation-duration: 6s;
+  box-shadow: 0 0 10px #0080ff, 0 0 20px #0080ff;
 }
 
 .particle:nth-child(3) {
-  left: 30%;
+  left: 50%;
   animation-delay: 4s;
   animation-duration: 7s;
+  box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
 }
 
 .particle:nth-child(4) {
-  left: 70%;
+  left: 75%;
   animation-delay: 1s;
   animation-duration: 9s;
+  box-shadow: 0 0 10px #8000ff, 0 0 20px #8000ff;
 }
 
 .particle:nth-child(5) {
-  left: 80%;
+  left: 90%;
   animation-delay: 3s;
   animation-duration: 5s;
+  box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
 }
 
 @keyframes float {
   0% {
-    transform: translateY(100vh) rotate(0deg);
+    transform: translateY(100vh) rotate(0deg) scale(0);
     opacity: 0;
   }
   10% {
-    opacity: 0.6;
+    opacity: 0.8;
+    transform: translateY(90vh) rotate(45deg) scale(1);
   }
   90% {
-    opacity: 0.6;
+    opacity: 0.8;
+    transform: translateY(10vh) rotate(315deg) scale(1);
   }
   100% {
-    transform: translateY(-100px) rotate(360deg);
+    transform: translateY(-10vh) rotate(360deg) scale(0);
     opacity: 0;
   }
 }
@@ -151,11 +198,13 @@ body {
 
 /* 卡片样式 */
 .glass-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(10, 14, 39, 0.6), rgba(26, 26, 46, 0.6));
+  backdrop-filter: blur(20px);
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 0 20px rgba(0, 255, 255, 0.05);
 }
 
 /* 按钮样式增强 */
@@ -174,25 +223,30 @@ body {
 
 /* 表单样式增强 */
 .el-form {
-  background: rgba(255, 255, 255, 0.05);
+  background: linear-gradient(135deg, rgba(10, 14, 39, 0.4), rgba(26, 26, 46, 0.4));
   padding: 30px;
   border-radius: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
 }
 
 .el-input__wrapper {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(10, 14, 39, 0.6);
+  border: 1px solid rgba(0, 255, 255, 0.3);
   border-radius: 8px;
+  backdrop-filter: blur(10px);
 }
 
 .el-input__wrapper:hover {
   border-color: #00ffff;
+  background: rgba(10, 14, 39, 0.8);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
 }
 
 .el-input__wrapper.is-focus {
   border-color: #00ffff;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+  background: rgba(10, 14, 39, 0.9);
 }
 
 .el-input__inner {
@@ -205,38 +259,48 @@ body {
 
 /* 表格样式增强 */
 .el-table {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, rgba(10, 14, 39, 0.6), rgba(26, 26, 46, 0.6));
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
 }
 
 .el-table th.el-table__cell {
-  background: rgba(0, 255, 255, 0.1);
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.15), rgba(0, 128, 255, 0.15));
   color: #00ffff;
-  border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+  border-bottom: 2px solid rgba(0, 255, 255, 0.4);
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  font-weight: 600;
 }
 
 .el-table td.el-table__cell {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 255, 255, 0.1);
   color: #ffffff;
+  background: rgba(10, 14, 39, 0.3);
 }
 
 .el-table tr:hover > td {
-  background: rgba(0, 255, 255, 0.1);
+  background: linear-gradient(90deg, rgba(0, 255, 255, 0.15), rgba(0, 128, 255, 0.15));
 }
 
 /* 对话框样式增强 */
 .el-dialog {
-  background: rgba(26, 26, 46, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 255, 255, 0.3);
+  background: linear-gradient(135deg, rgba(10, 14, 39, 0.95), rgba(26, 26, 46, 0.95));
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(0, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    inset 0 0 30px rgba(0, 255, 255, 0.05);
 }
 
 .el-dialog__header {
   border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+  background: rgba(0, 255, 255, 0.05);
 }
 
 .el-dialog__title {
   color: #00ffff;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  font-weight: 600;
 }
 
 /* 消息提示样式增强 */
