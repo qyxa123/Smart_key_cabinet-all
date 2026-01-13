@@ -12,120 +12,58 @@
     <!-- 头部区域 -->
     <div class="page-header">
       <div class="logo-container">
-        <div class="space-station">
-          <div class="station-core"></div>
-          <div class="station-ring ring-1"></div>
-          <div class="station-ring ring-2"></div>
-          <div class="station-ring ring-3"></div>
-        </div>
         <div class="logo-icon">
           <div class="key-icon">🔑</div>
           <div class="pulse-ring"></div>
         </div>
       </div>
-      <h1 class="page-title">济外国际智能钥匙柜管理系统</h1>
-      <p class="page-subtitle">Jiwai International Smart Key Cabinet System</p>
+      <h1 class="page-title">济外国际智能钥匙柜</h1>
+      <p class="page-subtitle">Smart Key Cabinet System</p>
     </div>
 
     <!-- 主要内容区域 -->
-    <div class="glass-card main-content">
-      <div class="welcome-section">
-        <h2>欢迎使用智能钥匙柜系统</h2>
-        <p class="bilingual-subtitle">Welcome to Smart Key Cabinet System</p>
-        <p>请选择您需要的操作</p>
-        <p class="bilingual-subtitle">Please select your operation</p>
-      </div>
-
+    <div class="main-content">
       <!-- 操作按钮区域 -->
-      <div class="action-buttons">
-        <el-row :gutter="30" justify="center">
-          <el-col :xs="24" :sm="12" :md="8" :lg="6">
-            <div class="action-card" @click="$router.push('/borrow')">
-              <div class="card-icon">📤</div>
-              <h3>借钥匙</h3>
-              <p class="bilingual-subtitle">Borrow Key</p>
-              <div class="card-glow"></div>
-            </div>
-          </el-col>
-          
-          <el-col :xs="24" :sm="12" :md="8" :lg="6">
-            <div class="action-card" @click="$router.push('/return')">
-              <div class="card-icon">📥</div>
-              <h3>还钥匙</h3>
-              <p class="bilingual-subtitle">Return Key</p>
-              <div class="card-glow"></div>
-            </div>
-          </el-col>
-          
-          <el-col :xs="24" :sm="12" :md="8" :lg="6">
-            <div class="action-card" @click="$router.push('/users')">
-              <div class="card-icon">👥</div>
-              <h3>用户管理</h3>
-              <p class="bilingual-subtitle">User Management</p>
-              <div class="card-glow"></div>
-            </div>
-          </el-col>
-          
-          <el-col :xs="24" :sm="12" :md="8" :lg="6">
-            <div class="action-card" @click="$router.push('/keys')">
-              <div class="card-icon">🗝️</div>
-              <h3>钥匙管理</h3>
-              <p class="bilingual-subtitle">Key Management</p>
-              <div class="card-glow"></div>
-            </div>
-          </el-col>
-        </el-row>
-      </div>
-
-      <!-- 系统状态显示 -->
-      <div class="status-panel">
-        <h3>系统状态</h3>
-        <p class="bilingual-subtitle">System Status</p>
-        <el-row :gutter="20">
-          <el-col :xs="24" :sm="8">
-            <div class="status-item">
-              <div class="status-icon">🔓</div>
-              <div class="status-info">
-                <span class="status-label">可用钥匙</span>
-                <span class="bilingual-subtitle">Available Keys</span>
-                <span class="status-value">{{ availableKeys }}</span>
-              </div>
-            </div>
-          </el-col>
-          
-          <el-col :xs="24" :sm="8">
-            <div class="status-item">
-              <div class="status-icon">🔒</div>
-              <div class="status-info">
-                <span class="status-label">已借出</span>
-                <span class="bilingual-subtitle">Borrowed</span>
-                <span class="status-value">{{ borrowedKeys }}</span>
-              </div>
-            </div>
-          </el-col>
-          
-          <el-col :xs="24" :sm="8">
-            <div class="status-item">
-              <div class="status-icon">⚡</div>
-              <div class="status-info">
-                <span class="status-label">系统状态</span>
-                <span class="bilingual-subtitle">System Status</span>
-                <span class="status-value online">在线</span>
-                <span class="bilingual-subtitle">Online</span>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
+      <div class="action-grid">
+        <div class="action-card primary" @click="$router.push('/borrow')">
+          <div class="card-icon">📤</div>
+          <h3>借钥匙</h3>
+          <p>Borrow Key</p>
+        </div>
+        
+        <div class="action-card primary" @click="$router.push('/return')">
+          <div class="card-icon">📥</div>
+          <h3>还钥匙</h3>
+          <p>Return Key</p>
+        </div>
+        
+        <div class="action-card secondary" @click="$router.push('/users')">
+          <div class="card-icon">👥</div>
+          <h3>用户管理</h3>
+          <p>User Management</p>
+        </div>
+        
+        <div class="action-card secondary" @click="$router.push('/keys')">
+          <div class="card-icon">🗝️</div>
+          <h3>钥匙管理</h3>
+          <p>Key Management</p>
+        </div>
       </div>
     </div>
 
-    <!-- 底部信息 -->
-    <div class="footer">
-      <p>&copy; 2025 智能钥匙柜管理系统 | 计算机原理课程作业</p>
-      <div class="tech-info">
-        <span>Powered by Vue 3 & Element Plus</span>
-        <span class="separator">|</span>
-        <span>Version 1.0.0</span>
+    <!-- 底部状态栏 -->
+    <div class="status-bar">
+      <div class="status-item">
+        <span class="status-icon">🔓</span>
+        <span class="status-text">可用: {{ availableKeys }}</span>
+      </div>
+      <div class="status-item">
+        <span class="status-icon">🔒</span>
+        <span class="status-text">已借: {{ borrowedKeys }}</span>
+      </div>
+      <div class="status-item">
+        <span class="status-icon online">⚡</span>
+        <span class="status-text">在线</span>
       </div>
     </div>
   </div>
@@ -180,104 +118,36 @@ export default {
 </script>
 
 <style scoped>
-.main-content {
-  padding: 40px;
-  margin-bottom: 40px;
+.page-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.page-header {
+  flex-shrink: 0;
+  padding: 20px;
+  text-align: center;
 }
 
 .logo-container {
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 30px;
-  margin-bottom: 20px;
-}
-
-.space-station {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.station-core {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(45deg, #00ffff, #0080ff);
-  border-radius: 50%;
-  position: relative;
-  z-index: 3;
-  animation: corePulse 2s ease-in-out infinite;
-  box-shadow: 
-    0 0 20px rgba(0, 255, 255, 0.6),
-    inset 0 0 10px rgba(255, 255, 255, 0.3);
-}
-
-.station-ring {
-  position: absolute;
-  border: 2px solid;
-  border-radius: 50%;
-  animation: ringRotate 10s linear infinite;
-}
-
-.ring-1 {
-  width: 80px;
-  height: 80px;
-  border-color: #00ffff;
-  animation-duration: 8s;
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
-}
-
-.ring-2 {
-  width: 100px;
-  height: 100px;
-  border-color: #0080ff;
-  animation-duration: 12s;
-  animation-direction: reverse;
-  box-shadow: 0 0 15px rgba(0, 128, 255, 0.4);
-}
-
-.ring-3 {
-  width: 120px;
-  height: 120px;
-  border-color: #8000ff;
-  animation-duration: 15s;
-  box-shadow: 0 0 15px rgba(128, 0, 255, 0.4);
-}
-
-@keyframes corePulse {
-  0%, 100% { 
-    transform: scale(1);
-    box-shadow: 
-      0 0 20px rgba(0, 255, 255, 0.6),
-      inset 0 0 10px rgba(255, 255, 255, 0.3);
-  }
-  50% { 
-    transform: scale(1.1);
-    box-shadow: 
-      0 0 30px rgba(0, 255, 255, 0.8),
-      inset 0 0 15px rgba(255, 255, 255, 0.5);
-  }
-}
-
-@keyframes ringRotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  margin-bottom: 15px;
 }
 
 .logo-icon {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .key-icon {
-  font-size: 40px;
+  font-size: 30px;
   z-index: 2;
   position: relative;
 }
@@ -302,151 +172,131 @@ export default {
   }
 }
 
-.welcome-section {
-  text-align: center;
-  margin-bottom: 40px;
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 20px;
+  overflow: hidden;
 }
 
-.welcome-section h2 {
-  font-size: 2rem;
-  margin-bottom: 10px;
-  color: #ffffff;
-}
-
-.welcome-section p {
-  color: #aaa;
-  font-size: 1.1rem;
-}
-
-.bilingual-subtitle {
-  color: #aaa;
-  font-size: 0.9rem;
-  margin: 5px 0;
-  font-style: italic;
-}
-
-.action-buttons {
-  margin-bottom: 40px;
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 .action-card {
   background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(0, 128, 255, 0.1));
   border: 1px solid rgba(0, 255, 255, 0.3);
   border-radius: 15px;
-  padding: 30px;
+  padding: 25px 15px;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  margin-bottom: 20px;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.action-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0, 255, 255, 0.4);
+.action-card.primary {
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.15), rgba(0, 128, 255, 0.15));
   border-color: #00ffff;
 }
 
+.action-card.secondary {
+  background: linear-gradient(135deg, rgba(128, 0, 255, 0.1), rgba(0, 128, 255, 0.1));
+  border-color: rgba(128, 0, 255, 0.5);
+}
+
+.action-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 255, 255, 0.4);
+}
+
+.action-card.primary:hover {
+  box-shadow: 0 10px 25px rgba(0, 255, 255, 0.6);
+}
+
+.action-card.secondary:hover {
+  box-shadow: 0 10px 25px rgba(128, 0, 255, 0.4);
+}
+
 .card-icon {
-  font-size: 3rem;
-  margin-bottom: 15px;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
   display: block;
 }
 
 .action-card h3 {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   margin-bottom: 5px;
   color: #ffffff;
 }
 
-.card-glow {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
+.action-card p {
+  color: #aaa;
+  font-size: 0.8rem;
+  margin: 0;
 }
 
-.action-card:hover .card-glow {
-  left: 100%;
-}
-
-.status-panel {
+.status-bar {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 15px 20px;
   background: rgba(0, 0, 0, 0.3);
-  border-radius: 15px;
-  padding: 25px;
-  border: 1px solid rgba(0, 255, 255, 0.2);
-}
-
-.status-panel h3 {
-  margin-bottom: 20px;
-  color: #00ffff;
-  font-size: 1.3rem;
-  text-align: center;
+  border-top: 1px solid rgba(0, 255, 255, 0.2);
 }
 
 .status-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 15px;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 15px;
+  gap: 5px;
 }
 
 .status-icon {
-  font-size: 2rem;
-}
-
-.status-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.status-label {
-  color: #aaa;
-  font-size: 0.9rem;
-}
-
-.status-value {
-  color: #00ffff;
   font-size: 1.5rem;
-  font-weight: bold;
 }
 
-.status-value.online {
+.status-icon.online {
   color: #00ff00;
 }
 
-.footer {
+.status-text {
+  color: #aaa;
+  font-size: 0.8rem;
   text-align: center;
-  padding: 30px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  color: #666;
 }
 
-.tech-info {
-  margin-top: 10px;
-  font-size: 0.9rem;
-}
-
-.separator {
-  margin: 0 10px;
-}
-
-@media (max-width: 768px) {
-  .logo-container {
-    flex-direction: column;
-    gap: 20px;
+@media (max-width: 480px) {
+  .action-grid {
+    max-width: 300px;
+    gap: 12px;
   }
   
-  .main-content {
-    padding: 20px;
+  .action-card {
+    padding: 20px 10px;
+  }
+  
+  .card-icon {
+    font-size: 2rem;
+  }
+  
+  .action-card h3 {
+    font-size: 1rem;
+  }
+  
+  .action-card p {
+    font-size: 0.7rem;
   }
 }
 </style>

@@ -12,165 +12,113 @@
 
     <!-- 头部区域 -->
     <div class="page-header">
+      <el-button @click="$router.push('/')" class="back-btn" circle>
+        <el-icon><ArrowLeft /></el-icon>
+      </el-button>
       <div class="logo-icon">
-        <div class="key-icon">🔑</div>
-        <div class="pulse-ring"></div>
+        <div class="key-icon">📥</div>
       </div>
       <h1 class="page-title">还钥匙</h1>
       <p class="page-subtitle">Return Key</p>
-      <el-button @click="$router.push('/')" class="back-btn">
-        <el-icon><ArrowLeft /></el-icon>
-        返回主页
-      </el-button>
     </div>
 
     <!-- 主要内容区域 -->
-    <div class="glass-card main-content">
-      <div class="form-header">
-        <h2>钥匙归还申请</h2>
-        <p class="bilingual-subtitle">Key Return Application</p>
-        <p>请填写以下信息完成钥匙归还</p>
-        <p class="bilingual-subtitle">Please fill in the following information to complete key return</p>
-      </div>
-
+    <div class="main-content">
       <el-form
         ref="returnFormRef"
         :model="returnForm"
         :rules="returnRules"
-        label-width="120px"
         class="return-form"
       >
-        <!-- 身份验证部分 -->
-        <div class="form-section">
-          <h3>身份验证</h3>
-          <p class="bilingual-subtitle">Identity Verification</p>
+        <!-- 身份验证 -->
+        <div class="form-row">
+          <el-form-item prop="name" class="form-item">
+            <el-input
+              v-model="returnForm.name"
+              placeholder="姓名 Name"
+              size="large"
+              @blur="searchUser"
+            />
+          </el-form-item>
           
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="姓名" prop="name" required>
-                <el-input
-                  v-model="returnForm.name"
-                  placeholder="请输入您的姓名"
-                  @blur="searchUser"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="学号/工号" prop="studentId" required>
-                <el-input
-                  v-model="returnForm.studentId"
-                  placeholder="请输入学号或工号"
-                  @blur="searchUser"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
+          <el-form-item prop="studentId" class="form-item">
+            <el-input
+              v-model="returnForm.studentId"
+              placeholder="学号/工号 ID"
+              size="large"
+              @blur="searchUser"
+            />
+          </el-form-item>
         </div>
 
         <!-- 借用记录 -->
-        <div class="form-section" v-if="borrowedKeys.length > 0">
-          <h3>您的借用记录</h3>
-          <p class="bilingual-subtitle">Your Borrowed Keys</p>
-          
-          <el-table :data="borrowedKeys" style="width: 100%">
-            <el-table-column prop="id" label="钥匙ID" width="80" />
-            <el-table-column prop="room" label="房间号" width="120" />
-            <el-table-column label="操作" width="120">
-              <template #default="scope">
-                <el-button 
-                  type="primary" 
-                  size="small"
-                  @click="selectKeyToReturn(scope.row)"
-                >
-                  选择归还
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
+        <div class="borrowed-keys" v-if="borrowedKeys.length > 0">
+          <p class="section-title">您的借用记录 Borrowed Keys</p>
+          <div class="key-list">
+            <div 
+              v-for="key in borrowedKeys" 
+              :key="key.id"
+              class="key-item"
+              :class="{ active: returnForm.keyId === key.id.toString() }"
+              @click="selectKeyToReturn(key)"
+            >
+              <div class="key-info">
+                <span class="room-number">{{ key.room }}号房间</span>
+                <span class="key-id">ID: {{ key.id }}</span>
+              </div>
+              <div class="select-icon">
+                {{ returnForm.keyId === key.id.toString() ? '✓' : '→' }}
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- 钥匙信息部分 -->
-        <div class="form-section">
-          <h3>归还钥匙信息</h3>
-          <p class="bilingual-subtitle">Return Key Information</p>
-          
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="钥匙ID" prop="keyId" required>
-                <el-input
-                  v-model="returnForm.keyId"
-                  placeholder="请输入要归还的钥匙ID"
-                  readonly
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="房间号">
-                <el-input
-                  v-model="returnForm.roomNumber"
-                  placeholder="选择钥匙后自动填充"
-                  readonly
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-
-        <!-- 使用情况反馈 -->
-        <div class="form-section">
-          <h3>使用情况反馈</h3>
-          <p class="bilingual-subtitle">Usage Feedback</p>
-          
-          <el-form-item label="钥匙状态" prop="keyCondition" required>
-            <el-radio-group v-model="returnForm.keyCondition">
-              <el-radio label="excellent">完好无损 (Excellent)</el-radio>
-              <el-radio label="good">轻微磨损 (Good)</el-radio>
-              <el-radio label="damaged">有损坏 (Damaged)</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          
-          <el-form-item label="使用备注">
-            <el-input
-              v-model="returnForm.usageNotes"
-              type="textarea"
-              :rows="3"
-              placeholder="请描述钥匙的使用情况或任何需要说明的事项"
-            />
+        <!-- 钥匙状态 -->
+        <div class="form-row" v-if="returnForm.keyId">
+          <el-form-item prop="keyCondition" class="form-item full-width">
+            <el-select
+              v-model="returnForm.keyCondition"
+              placeholder="钥匙状态 Key Condition"
+              size="large"
+              style="width: 100%"
+            >
+              <el-option label="完好无损 Excellent" value="excellent" />
+              <el-option label="轻微磨损 Good" value="good" />
+              <el-option label="有损坏 Damaged" value="damaged" />
+            </el-select>
           </el-form-item>
         </div>
 
-        <!-- 服务评价 -->
-        <div class="form-section">
-          <h3>服务评价</h3>
-          <p class="bilingual-subtitle">Service Rating</p>
-          
-          <el-form-item label="满意度" prop="satisfaction" required>
+        <!-- 满意度评价 -->
+        <div class="rating-section" v-if="returnForm.keyId">
+          <p class="section-title">服务评价 Service Rating</p>
+          <el-form-item prop="satisfaction" class="rating-item">
             <el-rate
               v-model="returnForm.satisfaction"
               :colors="['#ff6b6b', '#ffa500', '#00ffff']"
+              size="large"
               show-text
-              :texts="['非常不满意', '不满意', '一般', '满意', '非常满意']"
+              :texts="['很差', '较差', '一般', '满意', '很好']"
             />
           </el-form-item>
-          
-          <el-form-item label="改进建议">
-            <el-input
-              v-model="returnForm.suggestions"
-              type="textarea"
-              :rows="3"
-              placeholder="请提供您的宝贵建议，帮助我们改进服务"
-            />
-          </el-form-item>
-        </div>
-
-        <!-- 提交按钮 -->
-        <div class="form-actions">
-          <el-button @click="resetForm">重置表单</el-button>
-          <el-button type="primary" @click="submitForm" :loading="submitting">
-            确认归还
-          </el-button>
         </div>
       </el-form>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="bottom-actions" v-if="returnForm.keyId">
+      <el-button @click="resetForm" size="large" class="action-btn secondary">
+        重置 Reset
+      </el-button>
+      <el-button 
+        type="primary" 
+        @click="submitForm" 
+        :loading="submitting"
+        size="large"
+        class="action-btn primary"
+      >
+        {{ submitting ? '归还中...' : '确认归还 Confirm' }}
+      </el-button>
     </div>
   </div>
 </template>
@@ -361,109 +309,261 @@ export default {
 </script>
 
 <style scoped>
-.main-content {
-  padding: 40px;
-  max-width: 800px;
-  margin: 0 auto;
+.page-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.page-header {
+  flex-shrink: 0;
+  padding: 15px 20px;
+  text-align: center;
+  position: relative;
 }
 
 .back-btn {
   position: absolute;
-  top: 20px;
+  top: 15px;
   left: 20px;
-}
-
-.form-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.form-header h2 {
-  font-size: 2rem;
-  margin-bottom: 10px;
-  color: #ffffff;
-}
-
-.form-section {
-  margin-bottom: 40px;
-  padding: 25px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 15px;
-  border: 1px solid rgba(0, 255, 255, 0.1);
-}
-
-.form-section h3 {
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.3);
   color: #00ffff;
-  margin-bottom: 20px;
-  font-size: 1.3rem;
-  border-bottom: 1px solid rgba(0, 255, 255, 0.3);
-  padding-bottom: 10px;
 }
 
-.form-actions {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  margin-top: 40px;
+.back-btn:hover {
+  background: rgba(0, 255, 255, 0.2);
+  border-color: #00ffff;
 }
 
 .logo-icon {
-  position: relative;
-  width: 80px;
-  height: 80px;
+  margin: 10px auto 15px;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(0, 128, 255, 0.1));
+  border-radius: 50%;
+  border: 1px solid rgba(0, 255, 255, 0.3);
 }
 
 .key-icon {
-  font-size: 40px;
-  z-index: 2;
-  position: relative;
+  font-size: 24px;
 }
 
-.pulse-ring {
-  position: absolute;
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+  overflow-y: auto;
+}
+
+.return-form {
+  max-width: 400px;
+  margin: 0 auto;
+  flex: 1;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.form-item {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.form-item.full-width {
+  flex: none;
   width: 100%;
-  height: 100%;
-  border: 2px solid #00ffff;
-  border-radius: 50%;
-  animation: pulse 2s infinite;
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(0.8);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1.2);
-    opacity: 0;
-  }
+.section-title {
+  color: #00ffff;
+  font-size: 14px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: 600;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.borrowed-keys {
+  margin-bottom: 20px;
 }
 
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+.key-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-@media (max-width: 768px) {
-  .main-content {
-    padding: 20px;
-  }
-  
-  .form-section {
-    padding: 15px;
-  }
-  
-  .form-actions {
+.key-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.key-item:hover {
+  background: rgba(0, 255, 255, 0.1);
+  border-color: #00ffff;
+}
+
+.key-item.active {
+  background: rgba(0, 255, 255, 0.2);
+  border-color: #00ffff;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+.key-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.room-number {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.key-id {
+  color: #aaa;
+  font-size: 12px;
+}
+
+.select-icon {
+  color: #00ffff;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.rating-section {
+  margin-bottom: 20px;
+}
+
+.rating-item {
+  margin-bottom: 0;
+}
+
+.rating-item :deep(.el-rate) {
+  justify-content: center;
+}
+
+.rating-item :deep(.el-rate__text) {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.bottom-actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: 15px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.action-btn {
+  flex: 1;
+  height: 50px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.action-btn.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.action-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.action-btn.primary {
+  background: linear-gradient(45deg, #00ffff, #0080ff);
+  border: 1px solid #00ffff;
+  color: #000;
+}
+
+.action-btn.primary:hover {
+  background: linear-gradient(45deg, #0080ff, #00ffff);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 255, 255, 0.4);
+}
+
+/* Element Plus 组件样式覆盖 */
+:deep(.el-input__wrapper) {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  height: 50px;
+}
+
+:deep(.el-input__wrapper:hover) {
+  border-color: #00ffff;
+}
+
+:deep(.el-input__wrapper.is-focus) {
+  border-color: #00ffff;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+:deep(.el-input__inner) {
+  color: #ffffff;
+  font-size: 16px;
+}
+
+:deep(.el-input__inner::placeholder) {
+  color: #666;
+}
+
+:deep(.el-select .el-input__wrapper) {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+:deep(.el-select-dropdown) {
+  background: rgba(26, 26, 46, 0.95);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+:deep(.el-select-dropdown__item) {
+  color: #ffffff;
+}
+
+:deep(.el-select-dropdown__item:hover) {
+  background: rgba(0, 255, 255, 0.1);
+}
+
+:deep(.el-select-dropdown__item.selected) {
+  background: rgba(0, 255, 255, 0.2);
+  color: #00ffff;
+}
+
+@media (max-width: 480px) {
+  .form-row {
     flex-direction: column;
+    gap: 15px;
+  }
+  
+  .bottom-actions {
+    flex-direction: column;
+  }
+  
+  .action-btn {
+    height: 45px;
   }
 }
 </style>

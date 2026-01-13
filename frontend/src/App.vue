@@ -12,6 +12,7 @@ export default {
 
 <style>
 #app {
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 </style>

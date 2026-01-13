@@ -11,129 +11,149 @@
 
     <!-- 头部区域 -->
     <div class="page-header">
+      <el-button @click="$router.push('/')" class="back-btn" circle>
+        <el-icon><ArrowLeft /></el-icon>
+      </el-button>
+      <div class="logo-icon">
+        <div class="key-icon">👥</div>
+      </div>
       <h1 class="page-title">用户管理</h1>
       <p class="page-subtitle">User Management</p>
-      <el-button @click="$router.push('/')" class="back-btn">
-        <el-icon><ArrowLeft /></el-icon>
-        返回主页
-      </el-button>
     </div>
 
     <!-- 主要内容区域 -->
-    <div class="glass-card main-content">
-      <!-- 操作栏 -->
-      <div class="toolbar">
-        <el-button type="primary" @click="showAddDialog">
-          <el-icon><Plus /></el-icon>
-          添加用户
-        </el-button>
-        <el-button @click="loadUsers">
-          <el-icon><Refresh /></el-icon>
-          刷新
-        </el-button>
-      </div>
-
-      <!-- 用户表格 -->
-      <el-table 
-        :data="users" 
-        style="width: 100%" 
-        v-loading="loading"
-        empty-text="暂无用户数据"
-      >
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="name" label="姓名" width="120" />
-        <el-table-column prop="identity" label="身份" width="100">
-          <template #default="scope">
-            <el-tag :type="scope.row.identity === 'teacher' ? 'success' : 'primary'">
-              {{ scope.row.identity === 'teacher' ? '老师' : '学生' }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="grade" label="年级" width="100" />
-        <el-table-column prop="class_" label="班级" width="100" />
-        <el-table-column prop="office" label="办公室" width="120" />
-        <el-table-column label="借用钥匙" width="200">
-          <template #default="scope">
-            <div v-if="scope.row.keys && scope.row.keys.length > 0">
+    <div class="main-content">
+      <!-- 用户列表 -->
+      <div class="user-list" v-loading="loading">
+        <div 
+          v-for="user in users" 
+          :key="user.id"
+          class="user-card"
+          @click="showUserDetail(user)"
+        >
+          <div class="user-info">
+            <div class="user-name">{{ user.name }}</div>
+            <div class="user-details">
+              <span class="user-id">ID: {{ user.id }}</span>
               <el-tag 
-                v-for="key in scope.row.keys" 
-                :key="key.id"
+                :type="user.identity === 'teacher' ? 'success' : 'primary'"
                 size="small"
-                style="margin-right: 5px;"
               >
-                {{ key.room }}号房间
+                {{ user.identity === 'teacher' ? '老师' : '学生' }}
               </el-tag>
             </div>
-            <span v-else style="color: #999;">无</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="200">
-          <template #default="scope">
-            <el-button size="small" @click="editUser(scope.row)">编辑</el-button>
-            <el-button 
-              size="small" 
-              type="danger" 
-              @click="deleteUser(scope.row)"
-            >
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+            <div class="user-keys" v-if="user.keys && user.keys.length > 0">
+              <span class="keys-count">借用钥匙: {{ user.keys.length }}把</span>
+            </div>
+          </div>
+          <div class="user-actions">
+            <el-icon class="action-icon"><ArrowRight /></el-icon>
+          </div>
+        </div>
+        
+        <div v-if="users.length === 0 && !loading" class="empty-state">
+          <div class="empty-icon">👤</div>
+          <p>暂无用户数据</p>
+          <p class="empty-subtitle">No users found</p>
+        </div>
+      </div>
     </div>
 
-    <!-- 添加/编辑用户对话框 -->
+    <!-- 底部按钮 -->
+    <div class="bottom-actions">
+      <el-button @click="loadUsers" size="large" class="action-btn secondary">
+        <el-icon><Refresh /></el-icon>
+        刷新 Refresh
+      </el-button>
+      <el-button type="primary" @click="showAddDialog" size="large" class="action-btn primary">
+        <el-icon><Plus /></el-icon>
+        添加用户 Add User
+      </el-button>
+    </div>
+
+    <!-- 用户详情对话框 -->
     <el-dialog
-      :title="dialogTitle"
-      v-model="dialogVisible"
-      width="500px"
+      v-model="detailDialogVisible"
+      :title="selectedUser?.name + ' 的详细信息'"
+      width="90%"
+      :before-close="handleDetailClose"
+    >
+      <div v-if="selectedUser" class="user-detail">
+        <div class="detail-section">
+          <h4>基本信息</h4>
+          <p><strong>姓名:</strong> {{ selectedUser.name }}</p>
+          <p><strong>ID:</strong> {{ selectedUser.id }}</p>
+          <p><strong>身份:</strong> {{ selectedUser.identity === 'teacher' ? '老师' : '学生' }}</p>
+          <p v-if="selectedUser.grade"><strong>年级:</strong> {{ selectedUser.grade }}</p>
+          <p v-if="selectedUser.class_"><strong>班级:</strong> {{ selectedUser.class_ }}</p>
+          <p v-if="selectedUser.office"><strong>办公室:</strong> {{ selectedUser.office }}</p>
+        </div>
+        
+        <div class="detail-section" v-if="selectedUser.keys && selectedUser.keys.length > 0">
+          <h4>借用的钥匙</h4>
+          <div class="borrowed-keys-list">
+            <div v-for="key in selectedUser.keys" :key="key.id" class="borrowed-key-item">
+              <span>{{ key.room }}号房间</span>
+              <span class="key-id">ID: {{ key.id }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <template #footer>
+        <el-button @click="detailDialogVisible = false">关闭</el-button>
+        <el-button type="danger" @click="confirmDeleteUser">删除用户</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 添加用户对话框 -->
+    <el-dialog
+      v-model="addDialogVisible"
+      title="添加新用户"
+      width="90%"
+      :before-close="handleAddClose"
     >
       <el-form
-        ref="userFormRef"
-        :model="userForm"
-        :rules="userRules"
+        ref="addFormRef"
+        :model="addForm"
+        :rules="addRules"
         label-width="80px"
       >
         <el-form-item label="姓名" prop="name">
-          <el-input v-model="userForm.name" placeholder="请输入姓名" />
+          <el-input v-model="addForm.name" placeholder="请输入姓名" />
         </el-form-item>
         
         <el-form-item label="身份" prop="identity">
-          <el-radio-group v-model="userForm.identity">
+          <el-radio-group v-model="addForm.identity">
             <el-radio label="student">学生</el-radio>
             <el-radio label="teacher">老师</el-radio>
           </el-radio-group>
         </el-form-item>
         
-        <el-form-item label="年级" prop="grade" v-if="userForm.identity === 'student'">
-          <el-input v-model="userForm.grade" placeholder="请输入年级" />
+        <el-form-item label="年级" prop="grade" v-if="addForm.identity === 'student'">
+          <el-input v-model="addForm.grade" placeholder="请输入年级" />
         </el-form-item>
         
-        <el-form-item label="班级" prop="class_" v-if="userForm.identity === 'student'">
-          <el-input v-model="userForm.class_" placeholder="请输入班级" />
+        <el-form-item label="班级" prop="class_" v-if="addForm.identity === 'student'">
+          <el-input v-model="addForm.class_" placeholder="请输入班级" />
         </el-form-item>
         
-        <el-form-item label="办公室" prop="office" v-if="userForm.identity === 'teacher'">
-          <el-input v-model="userForm.office" placeholder="请输入办公室" />
+        <el-form-item label="办公室" prop="office" v-if="addForm.identity === 'teacher'">
+          <el-input v-model="addForm.office" placeholder="请输入办公室" />
         </el-form-item>
       </el-form>
       
       <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="saveUser" :loading="saving">
-            确定
-          </el-button>
-        </span>
+        <el-button @click="addDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitAddForm" :loading="submitting">确定</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
-
 <script>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { ArrowLeft, Plus, Refresh } from '@element-plus/icons-vue'
+import { ArrowLeft, Plus, Refresh, ArrowRight } from '@element-plus/icons-vue'
 import { userAPI } from '../api'
 
 export default {
@@ -141,18 +161,19 @@ export default {
   components: {
     ArrowLeft,
     Plus,
-    Refresh
+    Refresh,
+    ArrowRight
   },
   setup() {
     const users = ref([])
     const loading = ref(false)
-    const dialogVisible = ref(false)
-    const dialogTitle = ref('添加用户')
-    const userFormRef = ref()
-    const saving = ref(false)
-    const editingUserId = ref(null)
+    const detailDialogVisible = ref(false)
+    const addDialogVisible = ref(false)
+    const selectedUser = ref(null)
+    const addFormRef = ref()
+    const submitting = ref(false)
 
-    const userForm = reactive({
+    const addForm = reactive({
       name: '',
       identity: 'student',
       grade: '',
@@ -160,7 +181,7 @@ export default {
       office: ''
     })
 
-    const userRules = {
+    const addRules = {
       name: [
         { required: true, message: '请输入姓名', trigger: 'blur' }
       ],
@@ -182,63 +203,49 @@ export default {
       }
     }
 
+    const showUserDetail = (user) => {
+      selectedUser.value = user
+      detailDialogVisible.value = true
+    }
+
     const showAddDialog = () => {
-      dialogTitle.value = '添加用户'
-      editingUserId.value = null
-      resetForm()
-      dialogVisible.value = true
+      resetAddForm()
+      addDialogVisible.value = true
     }
 
-    const editUser = (user) => {
-      dialogTitle.value = '编辑用户'
-      editingUserId.value = user.id
-      Object.assign(userForm, {
-        name: user.name,
-        identity: user.identity,
-        grade: user.grade || '',
-        class_: user.class_ || '',
-        office: user.office || ''
-      })
-      dialogVisible.value = true
-    }
-
-    const saveUser = async () => {
-      if (!userFormRef.value) return
+    const submitAddForm = async () => {
+      if (!addFormRef.value) return
 
       try {
-        await userFormRef.value.validate()
-        saving.value = true
+        await addFormRef.value.validate()
+        submitting.value = true
 
         const userData = {
-          name: userForm.name,
-          identity: userForm.identity,
-          grade: userForm.identity === 'student' ? userForm.grade : null,
-          class_: userForm.identity === 'student' ? userForm.class_ : null,
-          office: userForm.identity === 'teacher' ? userForm.office : null
+          name: addForm.name,
+          identity: addForm.identity,
+          grade: addForm.identity === 'student' ? addForm.grade : null,
+          class_: addForm.identity === 'student' ? addForm.class_ : null,
+          office: addForm.identity === 'teacher' ? addForm.office : null
         }
 
-        if (editingUserId.value) {
-          await userAPI.updateUser(editingUserId.value, userData)
-          ElMessage.success('用户更新成功')
-        } else {
-          await userAPI.createUser(userData)
-          ElMessage.success('用户添加成功')
-        }
-
-        dialogVisible.value = false
+        await userAPI.createUser(userData)
+        ElMessage.success('用户添加成功')
+        addDialogVisible.value = false
         loadUsers()
       } catch (error) {
-        console.error('保存用户失败:', error)
-        ElMessage.error('保存用户失败')
+        console.error('添加用户失败:', error)
+        ElMessage.error('添加用户失败')
       } finally {
-        saving.value = false
+        submitting.value = false
       }
     }
 
-    const deleteUser = async (user) => {
+    const confirmDeleteUser = async () => {
+      if (!selectedUser.value) return
+
       try {
         await ElMessageBox.confirm(
-          `确定要删除用户 "${user.name}" 吗？`,
+          `确定要删除用户 "${selectedUser.value.name}" 吗？`,
           '确认删除',
           {
             confirmButtonText: '确定',
@@ -247,8 +254,9 @@ export default {
           }
         )
 
-        await userAPI.deleteUser(user.id)
+        await userAPI.deleteUser(selectedUser.value.id)
         ElMessage.success('用户删除成功')
+        detailDialogVisible.value = false
         loadUsers()
       } catch (error) {
         if (error !== 'cancel') {
@@ -258,17 +266,27 @@ export default {
       }
     }
 
-    const resetForm = () => {
-      Object.assign(userForm, {
+    const resetAddForm = () => {
+      Object.assign(addForm, {
         name: '',
         identity: 'student',
         grade: '',
         class_: '',
         office: ''
       })
-      if (userFormRef.value) {
-        userFormRef.value.resetFields()
+      if (addFormRef.value) {
+        addFormRef.value.resetFields()
       }
+    }
+
+    const handleDetailClose = () => {
+      detailDialogVisible.value = false
+      selectedUser.value = null
+    }
+
+    const handleAddClose = () => {
+      addDialogVisible.value = false
+      resetAddForm()
     }
 
     onMounted(() => {
@@ -278,46 +296,249 @@ export default {
     return {
       users,
       loading,
-      dialogVisible,
-      dialogTitle,
-      userFormRef,
-      userForm,
-      userRules,
-      saving,
+      detailDialogVisible,
+      addDialogVisible,
+      selectedUser,
+      addFormRef,
+      addForm,
+      addRules,
+      submitting,
       loadUsers,
+      showUserDetail,
       showAddDialog,
-      editUser,
-      saveUser,
-      deleteUser
+      submitAddForm,
+      confirmDeleteUser,
+      handleDetailClose,
+      handleAddClose
     }
   }
 }
 </script>
 
 <style scoped>
-.main-content {
-  padding: 30px;
+.page-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.page-header {
+  flex-shrink: 0;
+  padding: 15px 20px;
+  text-align: center;
+  position: relative;
 }
 
 .back-btn {
   position: absolute;
-  top: 20px;
+  top: 15px;
   left: 20px;
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  color: #00ffff;
 }
 
-.toolbar {
-  margin-bottom: 20px;
+.back-btn:hover {
+  background: rgba(0, 255, 255, 0.2);
+  border-color: #00ffff;
+}
+
+.logo-icon {
+  margin: 10px auto 15px;
+  width: 50px;
+  height: 50px;
   display: flex;
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(0, 128, 255, 0.1));
+  border-radius: 50%;
+  border: 1px solid rgba(0, 255, 255, 0.3);
 }
 
-@media (max-width: 768px) {
-  .main-content {
-    padding: 15px;
+.key-icon {
+  font-size: 24px;
+}
+
+.main-content {
+  flex: 1;
+  padding: 0 20px;
+  overflow-y: auto;
+}
+
+.user-list {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.user-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.user-card:hover {
+  background: rgba(0, 255, 255, 0.1);
+  border-color: #00ffff;
+  transform: translateY(-2px);
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-name {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.user-details {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.user-id {
+  color: #aaa;
+  font-size: 12px;
+}
+
+.user-keys {
+  color: #00ffff;
+  font-size: 12px;
+}
+
+.keys-count {
+  font-weight: 500;
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+}
+
+.action-icon {
+  color: #00ffff;
+  font-size: 18px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.empty-subtitle {
+  font-size: 14px;
+  color: #888;
+  margin-top: 5px;
+}
+
+.bottom-actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: 15px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.action-btn {
+  flex: 1;
+  height: 50px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.action-btn.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.action-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.action-btn.primary {
+  background: linear-gradient(45deg, #00ffff, #0080ff);
+  border: 1px solid #00ffff;
+  color: #000;
+}
+
+.action-btn.primary:hover {
+  background: linear-gradient(45deg, #0080ff, #00ffff);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 255, 255, 0.4);
+}
+
+.user-detail {
+  color: #ffffff;
+}
+
+.detail-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 255, 0.1);
+}
+
+.detail-section h4 {
+  color: #00ffff;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.detail-section p {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.borrowed-keys-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.borrowed-key-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(0, 255, 255, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.borrowed-key-item .key-id {
+  color: #aaa;
+  font-size: 12px;
+}
+
+@media (max-width: 480px) {
+  .bottom-actions {
+    flex-direction: column;
   }
   
-  .toolbar {
-    flex-direction: column;
+  .action-btn {
+    height: 45px;
   }
 }
 </style>

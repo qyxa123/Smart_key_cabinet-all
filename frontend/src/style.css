@@ -9,8 +9,10 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
   color: #ffffff;
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100vh;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
 }
 
 /* 背景动画粒子 */
@@ -106,27 +108,29 @@ body {
 
 /* 自定义容器样式 */
 .page-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
 }
 
 .page-header {
   text-align: center;
-  margin-bottom: 40px;
+  padding: 15px 20px;
+  flex-shrink: 0;
   position: relative;
 }
 
 .page-title {
-  font-size: 2.5rem;
+  font-size: 1.8rem;
   background: linear-gradient(45deg, #00ffff, #0080ff, #8000ff);
   background-size: 300% 300%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: gradientShift 4s ease-in-out infinite;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 @keyframes gradientShift {
@@ -140,9 +144,9 @@ body {
 
 .page-subtitle {
   color: #888;
-  font-size: 1rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 }
 
 /* 卡片样式 */
