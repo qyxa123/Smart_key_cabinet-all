@@ -46,7 +46,7 @@
           
           <el-form-item prop="studentId" class="form-item">
             <div class="input-wrapper">
-              <span class="input-icon">🎫</span>
+              <span class="input-icon">🏷️</span>
               <el-input
                 v-model="borrowForm.studentId"
                 :placeholder="borrowForm.identity === 'teacher' ? '工号 ID' : '学号 Student ID'"
@@ -60,7 +60,7 @@
         <div class="form-row">
           <el-form-item prop="identity" class="form-item">
             <div class="input-wrapper">
-              <span class="input-icon">🏷️</span>
+              <span class="input-icon">👤</span>
               <el-select
                 v-model="borrowForm.identity"
                 placeholder="身份类型"
@@ -568,20 +568,90 @@ export default {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
-:deep(.el-select-dropdown__item) {
+:deep(.el-select) {
+  width: 100%;
+}
+
+:deep(.el-select .el-input) {
+  height: 50px;
+}
+
+:deep(.el-select .el-input__wrapper) {
+  padding-left: 50px !important;
+  padding-right: 35px !important;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  height: 50px;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+:deep(.el-select .el-input__wrapper:hover) {
+  border-color: rgba(0, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+:deep(.el-select .el-input__wrapper.is-focus) {
+  border-color: #00ffff;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 255, 0.3),
+    inset 0 2px 10px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:deep(.el-select .el-input__inner) {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
   color: #ffffff;
+  font-size: 15px;
+  font-weight: 500;
+  height: 46px;
+  line-height: 46px;
+}
+
+:deep(.el-select__placeholder) {
+  color: #666;
+  font-weight: 400;
+}
+
+:deep(.el-select .el-select__caret) {
+  color: #00ffff;
+  font-size: 14px;
+  right: 12px;
+}
+
+:deep(.el-select-dropdown) {
+  background: rgba(10, 14, 39, 0.98) !important;
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(0, 255, 255, 0.3) !important;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  margin-top: 5px;
+}
+
+:deep(.el-select-dropdown__item) {
+  color: #ffffff !important;
   transition: all 0.2s ease;
+  background: transparent !important;
+  padding: 12px 20px;
+  font-size: 15px;
 }
 
 :deep(.el-select-dropdown__item:hover) {
-  background: rgba(0, 255, 255, 0.15);
-  color: #00ffff;
+  background: rgba(0, 255, 255, 0.15) !important;
+  color: #00ffff !important;
 }
 
 :deep(.el-select-dropdown__item.selected) {
-  background: rgba(0, 255, 255, 0.25);
-  color: #00ffff;
+  background: rgba(0, 255, 255, 0.25) !important;
+  color: #00ffff !important;
   font-weight: 600;
+}
+
+:deep(.el-select-dropdown__item.is-hovering) {
+  background: rgba(0, 255, 255, 0.15) !important;
+  color: #00ffff !important;
 }
 
 @media (max-width: 480px) {
