@@ -144,7 +144,7 @@
 </template>
 
 <script>
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import { ArrowLeft, RefreshLeft, Check } from '@element-plus/icons-vue'
 import { userAPI } from '../api'
@@ -155,10 +155,6 @@ export default {
     ArrowLeft,
     RefreshLeft,
     Check
-  },export default {
-  name: 'ReturnKey',
-  components: {
-    ArrowLeft
   },
   setup() {
     const returnFormRef = ref()
