@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>借钥匙 - 济外国际智能钥匙柜管理系统</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部区域 -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <div class="key-icon">🔑</div>
+                    <div class="pulse-ring"></div>
+                </div>
+                <h1>借钥匙</h1>
+                <p class="subtitle">Borrow Key</p>
+            </div>
+            <a href="index.html" class="back-btn">← 返回主页</a>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>钥匙借用申请</h2>
+                    <p class="bilingual-subtitle">Key Borrowing Application</p>
+                    <p>请填写以下信息完成钥匙借用</p>
+                    <p class="bilingual-subtitle">Please fill in the following information to complete key borrowing</p>
+                </div>
+
+                <form class="borrow-form" id="borrowForm">
+                    <!-- 个人信息部分 -->
+                    <div class="form-section">
+                        <h3>个人信息</h3>
+                        <p class="bilingual-subtitle">Personal Information</p>
+                        <div class="form-group">
+                            <label>身份类型 *</label>
+                            <p class="bilingual-subtitle">Identity Type *</p>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="userType" value="teacher" required>
+                                    <span class="radio-mark"></span>
+                                    老师
+                                    <span class="bilingual-subtitle">Teacher</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="userType" value="student" required>
+                                    <span class="radio-mark"></span>
+                                    学生
+                                    <span class="bilingual-subtitle">Student</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">姓名 *</label>
+                                <p class="bilingual-subtitle">Name *</p>
+                                <input type="text" id="name" name="name" required 
+                                       placeholder="请输入您的姓名">
+                            </div>
+                            <div class="form-group">
+                                <label for="studentId" id="idLabel">学号/工号 *</label>
+                                <p class="bilingual-subtitle" id="idLabelEn">Student ID/Employee ID *</p>
+                                <input type="text" id="studentId" name="studentId" required 
+                                       placeholder="请输入学号或工号">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group" id="phoneGroup">
+                                <label for="phone">联系电话</label>
+                                <p class="bilingual-subtitle">Phone Number</p>
+                                <input type="tel" id="phone" name="phone" 
+                                       placeholder="请输入手机号码">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 钥匙信息部分 -->
+                    <div class="form-section">
+                        <h3>钥匙信息</h3>
+                        <p class="bilingual-subtitle">Key Information</p>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="roomNumber">门牌号 *</label>
+                                <p class="bilingual-subtitle">Room Number *</p>
+                                <input type="text" id="roomNumber" name="roomNumber" required 
+                                       placeholder="请输入门牌号 (如: 101, 205)">
+                            </div>
+                            <div class="form-group">
+                                <label for="keyNumber">钥匙编号</label>
+                                <p class="bilingual-subtitle">Key Number</p>
+                                <input type="text" id="keyNumber" name="keyNumber" 
+                                       placeholder="系统自动分配" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="purpose">借用目的 *</label>
+                            <p class="bilingual-subtitle">Purpose *</p>
+                            <textarea id="purpose" name="purpose" required 
+                                      placeholder="请详细说明借用钥匙的目的和用途"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 时间信息部分 -->
+                    <div class="form-section">
+                        <h3>借用时间</h3>
+                        <p class="bilingual-subtitle">Borrowing Time</p>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="borrowDate">借用日期 *</label>
+                                <p class="bilingual-subtitle">Borrow Date *</p>
+                                <input type="date" id="borrowDate" name="borrowDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="borrowTime">借用时间 *</label>
+                                <p class="bilingual-subtitle">Borrow Time *</p>
+                                <input type="time" id="borrowTime" name="borrowTime" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="returnDate">预计归还日期 *</label>
+                                <p class="bilingual-subtitle">Expected Return Date *</p>
+                                <input type="date" id="returnDate" name="returnDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="returnTime">预计归还时间 *</label>
+                                <p class="bilingual-subtitle">Expected Return Time *</p>
+                                <input type="time" id="returnTime" name="returnTime" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 协议和确认部分 -->
+                    <div class="form-section">
+                        <h3>使用协议</h3>
+                        <p class="bilingual-subtitle">Usage Agreement</p>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                                <span class="checkmark"></span>
+                                我已阅读并同意《钥匙借用协议》
+                                <p class="bilingual-subtitle">I have read and agree to the Key Borrowing Agreement</p>
+                            </label>
+                        </div>
+                        
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="agreeSafety" name="agreeSafety" required>
+                                <span class="checkmark"></span>
+                                我承诺安全使用钥匙，按时归还
+                                <p class="bilingual-subtitle">I promise to use the key safely and return it on time</p>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 提交按钮 -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">重置表单</button>
+                        <p class="bilingual-subtitle">Reset Form</p>
+                        <button type="submit" class="btn btn-primary">提交申请</button>
+                        <p class="bilingual-subtitle">Submit Application</p>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <!-- 底部信息 -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2025 智能钥匙柜管理系统 | 计算机原理课程作业</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 背景动画元素 -->
+    <div class="bg-animation">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

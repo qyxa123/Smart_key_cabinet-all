@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>还钥匙 - 济外国际智能钥匙柜管理系统</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部区域 -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <div class="key-icon">🔑</div>
+                    <div class="pulse-ring"></div>
+                </div>
+                <h1>还钥匙</h1>
+                <p class="subtitle">Return Key</p>
+            </div>
+            <a href="index.html" class="back-btn">← 返回主页</a>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>钥匙归还申请</h2>
+                    <p class="bilingual-subtitle">Key Return Application</p>
+                    <p>请填写以下信息完成钥匙归还</p>
+                    <p class="bilingual-subtitle">Please fill in the following information to complete key return</p>
+                </div>
+
+                <form class="return-form" id="returnForm">
+                    <!-- 身份验证部分 -->
+                    <div class="form-section">
+                        <h3>身份验证</h3>
+                        <p class="bilingual-subtitle">Identity Verification</p>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="returnName">姓名 *</label>
+                                <p class="bilingual-subtitle">Name *</p>
+                                <input type="text" id="returnName" name="returnName" required 
+                                       placeholder="请输入您的姓名">
+                            </div>
+                            <div class="form-group">
+                                <label for="returnStudentId">学号/工号 *</label>
+                                <p class="bilingual-subtitle">Student ID/Employee ID *</p>
+                                <input type="text" id="returnStudentId" name="returnStudentId" required 
+                                       placeholder="请输入学号或工号">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 钥匙信息部分 -->
+                    <div class="form-section">
+                        <h3>钥匙信息</h3>
+                        <p class="bilingual-subtitle">Key Information</p>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="returnKeyNumber">钥匙编号 *</label>
+                                <p class="bilingual-subtitle">Key Number *</p>
+                                <input type="text" id="returnKeyNumber" name="returnKeyNumber" required 
+                                       placeholder="请输入要归还的钥匙编号">
+                            </div>
+                            <div class="form-group">
+                                <label for="returnRoomNumber">门牌号 *</label>
+                                <p class="bilingual-subtitle">Room Number *</p>
+                                <input type="text" id="returnRoomNumber" name="returnRoomNumber" required 
+                                       placeholder="请输入门牌号 (如: 101, 205)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 归还时间部分 -->
+                    <div class="form-section">
+                        <h3>归还时间</h3>
+                        <p class="bilingual-subtitle">Return Time</p>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="actualReturnDate">实际归还日期 *</label>
+                                <p class="bilingual-subtitle">Actual Return Date *</p>
+                                <input type="date" id="actualReturnDate" name="actualReturnDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="actualReturnTime">实际归还时间 *</label>
+                                <p class="bilingual-subtitle">Actual Return Time *</p>
+                                <input type="time" id="actualReturnTime" name="actualReturnTime" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 使用情况反馈 -->
+                    <div class="form-section">
+                        <h3>使用情况反馈</h3>
+                        <p class="bilingual-subtitle">Usage Feedback</p>
+                        <div class="form-group">
+                            <label>钥匙使用状态 *</label>
+                            <p class="bilingual-subtitle">Key Condition *</p>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="keyCondition" value="excellent" required>
+                                    <span class="radio-mark"></span>
+                                    完好无损
+                                    <p class="bilingual-subtitle">Excellent</p>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="keyCondition" value="good" required>
+                                    <span class="radio-mark"></span>
+                                    轻微磨损
+                                    <p class="bilingual-subtitle">Good</p>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="keyCondition" value="damaged" required>
+                                    <span class="radio-mark"></span>
+                                    有损坏
+                                    <p class="bilingual-subtitle">Damaged</p>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="usageNotes">使用备注</label>
+                            <p class="bilingual-subtitle">Usage Notes</p>
+                            <textarea id="usageNotes" name="usageNotes" 
+                                      placeholder="请描述钥匙的使用情况或任何需要说明的事项"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 满意度调查 -->
+                    <div class="form-section">
+                        <h3>服务评价</h3>
+                        <p class="bilingual-subtitle">Service Rating</p>
+                        <div class="form-group">
+                            <label>整体服务满意度 *</label>
+                            <p class="bilingual-subtitle">Overall Service Satisfaction *</p>
+                            <div class="rating-group">
+                                <label class="rating-label">
+                                    <input type="radio" name="satisfaction" value="5" required>
+                                    <span class="star">⭐</span>
+                                    非常满意
+                                    <p class="bilingual-subtitle">Very Satisfied</p>
+                                </label>
+                                <label class="rating-label">
+                                    <input type="radio" name="satisfaction" value="4" required>
+                                    <span class="star">⭐</span>
+                                    满意
+                                    <p class="bilingual-subtitle">Satisfied</p>
+                                </label>
+                                <label class="rating-label">
+                                    <input type="radio" name="satisfaction" value="3" required>
+                                    <span class="star">⭐</span>
+                                    一般
+                                    <p class="bilingual-subtitle">Neutral</p>
+                                </label>
+                                <label class="rating-label">
+                                    <input type="radio" name="satisfaction" value="2" required>
+                                    <span class="star">⭐</span>
+                                    不满意
+                                    <p class="bilingual-subtitle">Dissatisfied</p>
+                                </label>
+                                <label class="rating-label">
+                                    <input type="radio" name="satisfaction" value="1" required>
+                                    <span class="star">⭐</span>
+                                    非常不满意
+                                    <p class="bilingual-subtitle">Very Dissatisfied</p>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="suggestions">改进建议</label>
+                            <p class="bilingual-subtitle">Improvement Suggestions</p>
+                            <textarea id="suggestions" name="suggestions" 
+                                      placeholder="请提供您的宝贵建议，帮助我们改进服务"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 确认信息 -->
+                    <div class="form-section">
+                        <h3>确认信息</h3>
+                        <p class="bilingual-subtitle">Confirmation</p>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="confirmReturn" name="confirmReturn" required>
+                                <span class="checkmark"></span>
+                                我确认已安全归还钥匙
+                                <p class="bilingual-subtitle">I confirm that I have safely returned the key</p>
+                            </label>
+                        </div>
+                        
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="confirmInfo" name="confirmInfo" required>
+                                <span class="checkmark"></span>
+                                我确认以上信息真实有效
+                                <p class="bilingual-subtitle">I confirm that the above information is true and valid</p>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 提交按钮 -->
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">重置表单</button>
+                        <p class="bilingual-subtitle">Reset Form</p>
+                        <button type="submit" class="btn btn-primary">确认归还</button>
+                        <p class="bilingual-subtitle">Confirm Return</p>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <!-- 底部信息 -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2025 智能钥匙柜管理系统 | 计算机原理课程作业</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 背景动画元素 -->
+    <div class="bg-animation">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>济外国际智能钥匙柜管理系统</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部区域 -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-container">
+                    <div class="space-station">
+                        <div class="station-core"></div>
+                        <div class="station-ring ring-1"></div>
+                        <div class="station-ring ring-2"></div>
+                        <div class="station-ring ring-3"></div>
+                        <div class="energy-particles">
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                        </div>
+                    </div>
+                    <div class="logo-icon">
+                        <div class="key-icon">🔑</div>
+                        <div class="pulse-ring"></div>
+                    </div>
+                </div>
+                <h1>济外国际智能钥匙柜管理系统</h1>
+                <p class="subtitle">Jiwai International Smart Key Cabinet System</p>
+            </div>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <div class="welcome-section">
+                <h2>欢迎使用智能钥匙柜系统</h2>
+                <p class="bilingual-subtitle">Welcome to Smart Key Cabinet System</p>
+                <p>请选择您需要的操作</p>
+                <p class="bilingual-subtitle">Please select your operation</p>
+            </div>
+
+            <!-- 操作按钮区域 -->
+            <div class="action-buttons">
+                <div class="button-group">
+                    <a href="borrow.html" class="action-btn borrow-btn">
+                        <div class="btn-icon">📤</div>
+                        <h3>借钥匙</h3>
+                        <p class="bilingual-subtitle">Borrow Key</p>
+                        <div class="btn-glow"></div>
+                    </a>
+                    
+                    <a href="return.html" class="action-btn return-btn">
+                        <div class="btn-icon">📥</div>
+                        <h3>还钥匙</h3>
+                        <p class="bilingual-subtitle">Return Key</p>
+                        <div class="btn-glow"></div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 系统状态显示 -->
+            <div class="status-panel">
+                <h3>系统状态</h3>
+                <p class="bilingual-subtitle">System Status</p>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <div class="status-icon">🔓</div>
+                        <div class="status-info">
+                            <span class="status-label">可用钥匙</span>
+                            <span class="bilingual-subtitle">Available Keys</span>
+                            <span class="status-value" id="available-keys">24</span>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-icon">🔒</div>
+                        <div class="status-info">
+                            <span class="status-label">已借出</span>
+                            <span class="bilingual-subtitle">Borrowed</span>
+                            <span class="status-value" id="borrowed-keys">6</span>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-icon">⚡</div>
+                        <div class="status-info">
+                            <span class="status-label">系统状态</span>
+                            <span class="bilingual-subtitle">System Status</span>
+                            <span class="status-value online">在线</span>
+                            <span class="bilingual-subtitle">Online</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部信息 -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2025 智能钥匙柜管理系统 | 计算机原理课程作业</p>
+                <div class="tech-info">
+                    <span>Powered by HTML5 & CSS3</span>
+                    <span class="separator">|</span>
+                    <span>Version 1.0.0</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 背景动画元素 -->
+    <div class="bg-animation">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
