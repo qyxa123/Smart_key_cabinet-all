@@ -88,19 +88,17 @@
         <!-- 钥匙状态 -->
         <div class="form-row" v-if="returnForm.keyId">
           <el-form-item prop="keyCondition" class="form-item full-width">
-            <div class="input-wrapper">
-              <span class="input-icon">🔍</span>
-              <el-select
-                v-model="returnForm.keyCondition"
-                placeholder="钥匙状态 Key Condition"
-                size="large"
-                style="width: 100%"
-              >
-                <el-option label="完好无损 Excellent" value="excellent" />
-                <el-option label="轻微磨损 Good" value="good" />
-                <el-option label="有损坏 Damaged" value="damaged" />
-              </el-select>
-            </div>
+            <el-select
+              v-model="returnForm.keyCondition"
+              placeholder="钥匙状态 Key Condition"
+              size="large"
+              style="width: 100%"
+              class="custom-select"
+            >
+              <el-option label="完好无损 Excellent" value="excellent" />
+              <el-option label="轻微磨损 Good" value="good" />
+              <el-option label="有损坏 Damaged" value="damaged" />
+            </el-select>
           </el-form-item>
         </div>
 
@@ -692,19 +690,30 @@ export default {
 }
 
 :deep(.el-select .el-input__wrapper) {
-  padding-left: 50px !important;
+  padding-left: 15px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 12px !important;
+  height: 50px !important;
 }
 
 :deep(.el-select .el-input__inner) {
   padding-left: 0 !important;
+  color: #ffffff !important;
 }
 
 :deep(.el-select__placeholder) {
-  color: #666;
+  color: #666 !important;
 }
 
 :deep(.el-select .el-select__caret) {
-  color: #00ffff;
+  color: #00ffff !important;
+}
+
+:deep(.el-popper.el-select__popper) {
+  background: rgba(10, 14, 39, 0.98) !important;
+  border: 2px solid rgba(0, 255, 255, 0.3) !important;
+  border-radius: 12px !important;
 }
 
 :deep(.el-select-dropdown) {
@@ -726,7 +735,8 @@ export default {
   color: #00ffff !important;
 }
 
-:deep(.el-select-dropdown__item.selected) {
+:deep(.el-select-dropdown__item.selected),
+:deep(.el-select-dropdown__item.is-selected) {
   background: rgba(0, 255, 255, 0.25) !important;
   color: #00ffff !important;
   font-weight: 600;
