@@ -579,63 +579,69 @@ export default {
 :deep(.el-select .el-input__wrapper) {
   padding-left: 50px !important;
   padding-right: 35px !important;
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  height: 50px;
-  transition: all 0.3s ease;
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 12px !important;
+  height: 50px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2) !important;
 }
 
 :deep(.el-select .el-input__wrapper:hover) {
-  border-color: rgba(0, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(0, 255, 255, 0.5) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
 }
 
 :deep(.el-select .el-input__wrapper.is-focus) {
-  border-color: #00ffff;
+  border-color: #00ffff !important;
   box-shadow: 
     0 0 20px rgba(0, 255, 255, 0.3),
-    inset 0 2px 10px rgba(0, 0, 0, 0.2);
-  background: rgba(255, 255, 255, 0.1);
+    inset 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
 }
 
 :deep(.el-select .el-input__inner) {
   padding-left: 0 !important;
   padding-right: 0 !important;
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: 500;
-  height: 46px;
-  line-height: 46px;
+  color: #ffffff !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  height: 46px !important;
+  line-height: 46px !important;
+  background: transparent !important;
 }
 
 :deep(.el-select__placeholder) {
-  color: #666;
-  font-weight: 400;
+  color: #666 !important;
+  font-weight: 400 !important;
 }
 
 :deep(.el-select .el-select__caret) {
-  color: #00ffff;
-  font-size: 14px;
-  right: 12px;
+  color: #00ffff !important;
+  font-size: 14px !important;
+  right: 12px !important;
+}
+
+/* 让下拉箭头更像普通输入框的装饰 */
+:deep(.el-select .el-select__caret.is-reverse) {
+  transform: rotateZ(180deg) !important;
 }
 
 :deep(.el-select-dropdown) {
   background: rgba(10, 14, 39, 0.98) !important;
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px) !important;
   border: 2px solid rgba(0, 255, 255, 0.3) !important;
-  border-radius: 12px;
+  border-radius: 12px !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
-  margin-top: 5px;
+  margin-top: 5px !important;
 }
 
 :deep(.el-select-dropdown__item) {
   color: #ffffff !important;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease !important;
   background: transparent !important;
-  padding: 12px 20px;
-  font-size: 15px;
+  padding: 12px 20px !important;
+  font-size: 15px !important;
 }
 
 :deep(.el-select-dropdown__item:hover) {
@@ -646,7 +652,7 @@ export default {
 :deep(.el-select-dropdown__item.selected) {
   background: rgba(0, 255, 255, 0.25) !important;
   color: #00ffff !important;
-  font-weight: 600;
+  font-weight: 600 !important;
 }
 
 :deep(.el-select-dropdown__item.is-hovering) {

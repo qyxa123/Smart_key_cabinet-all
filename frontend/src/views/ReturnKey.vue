@@ -88,17 +88,19 @@
         <!-- 钥匙状态 -->
         <div class="form-row" v-if="returnForm.keyId">
           <el-form-item prop="keyCondition" class="form-item full-width">
-            <el-select
-              v-model="returnForm.keyCondition"
-              placeholder="钥匙状态 Key Condition"
-              size="large"
-              style="width: 100%"
-              class="custom-select"
-            >
-              <el-option label="完好无损 Excellent" value="excellent" />
-              <el-option label="轻微磨损 Good" value="good" />
-              <el-option label="有损坏 Damaged" value="damaged" />
-            </el-select>
+            <div class="input-wrapper">
+              <span class="input-icon">🔍</span>
+              <el-select
+                v-model="returnForm.keyCondition"
+                placeholder="钥匙状态 Key Condition"
+                size="large"
+                style="width: 100%"
+              >
+                <el-option label="完好无损 Excellent" value="excellent" />
+                <el-option label="轻微磨损 Good" value="good" />
+                <el-option label="有损坏 Damaged" value="damaged" />
+              </el-select>
+            </div>
           </el-form-item>
         </div>
 
@@ -689,45 +691,80 @@ export default {
   font-weight: 400;
 }
 
+:deep(.el-select) {
+  width: 100%;
+}
+
+:deep(.el-select .el-input) {
+  height: 50px;
+}
+
 :deep(.el-select .el-input__wrapper) {
-  padding-left: 15px !important;
+  padding-left: 50px !important;
+  padding-right: 35px !important;
   background: rgba(255, 255, 255, 0.05) !important;
   border: 2px solid rgba(255, 255, 255, 0.2) !important;
   border-radius: 12px !important;
   height: 50px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+:deep(.el-select .el-input__wrapper:hover) {
+  border-color: rgba(0, 255, 255, 0.5) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+:deep(.el-select .el-input__wrapper.is-focus) {
+  border-color: #00ffff !important;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 255, 0.3),
+    inset 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
 }
 
 :deep(.el-select .el-input__inner) {
   padding-left: 0 !important;
+  padding-right: 0 !important;
   color: #ffffff !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  height: 46px !important;
+  line-height: 46px !important;
+  background: transparent !important;
 }
 
 :deep(.el-select__placeholder) {
   color: #666 !important;
+  font-weight: 400 !important;
 }
 
 :deep(.el-select .el-select__caret) {
   color: #00ffff !important;
+  font-size: 14px !important;
+  right: 12px !important;
 }
 
-:deep(.el-popper.el-select__popper) {
-  background: rgba(10, 14, 39, 0.98) !important;
-  border: 2px solid rgba(0, 255, 255, 0.3) !important;
-  border-radius: 12px !important;
+/* 让下拉箭头更像普通输入框的装饰 */
+:deep(.el-select .el-select__caret.is-reverse) {
+  transform: rotateZ(180deg) !important;
 }
 
 :deep(.el-select-dropdown) {
   background: rgba(10, 14, 39, 0.98) !important;
-  backdrop-filter: blur(20px);
-  border: 2px solid rgba(0, 255, 255, 0.3);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px) !important;
+  border: 2px solid rgba(0, 255, 255, 0.3) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  margin-top: 5px !important;
 }
 
 :deep(.el-select-dropdown__item) {
   color: #ffffff !important;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease !important;
   background: transparent !important;
+  padding: 12px 20px !important;
+  font-size: 15px !important;
 }
 
 :deep(.el-select-dropdown__item:hover) {
@@ -735,15 +772,15 @@ export default {
   color: #00ffff !important;
 }
 
-:deep(.el-select-dropdown__item.selected),
-:deep(.el-select-dropdown__item.is-selected) {
+:deep(.el-select-dropdown__item.selected) {
   background: rgba(0, 255, 255, 0.25) !important;
   color: #00ffff !important;
-  font-weight: 600;
+  font-weight: 600 !important;
 }
 
 :deep(.el-select-dropdown__item.is-hovering) {
   background: rgba(0, 255, 255, 0.15) !important;
+  color: #00ffff !important;
 }
 
 @media (max-width: 480px) {
