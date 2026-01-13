@@ -476,8 +476,9 @@ export default {
   position: absolute;
   left: 15px;
   font-size: 18px;
-  z-index: 10;
+  z-index: 1;
   filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.5));
+  pointer-events: none;
 }
 
 .section-title {
@@ -660,7 +661,7 @@ export default {
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   height: 50px;
-  padding-left: 45px;
+  padding-left: 50px !important;
   transition: all 0.3s ease;
   box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
 }
@@ -682,6 +683,7 @@ export default {
   color: #ffffff;
   font-size: 15px;
   font-weight: 500;
+  padding-left: 0 !important;
 }
 
 :deep(.el-input__inner::placeholder) {
@@ -690,7 +692,7 @@ export default {
 }
 
 :deep(.el-select .el-input__wrapper) {
-  padding-left: 45px;
+  padding-left: 50px !important;
 }
 
 :deep(.el-select-dropdown) {
