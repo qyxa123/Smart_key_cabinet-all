@@ -26,7 +26,7 @@
       <!-- 钥匙列表 -->
       <div class="key-list" v-loading="loading">
         <div 
-          v-for="key in keys" 
+          v-for="key in paginatedKeys" 
           :key="key.id"
           class="key-card"
           :class="{ borrowed: isKeyBorrowed(key) }"
@@ -57,6 +57,16 @@
           <p>暂无钥匙数据</p>
           <p class="empty-subtitle">No keys found</p>
         </div>
+      </div>
+      <div class="pagination-container" v-if="keys.length > pageSize">
+        <el-pagination
+          layout="prev, pager, next"
+          background
+          :current-page="currentPage"
+          :page-size="pageSize"
+          :total="keys.length"
+          @current-change="handlePageChange"
+        />
       </div>
     </div>
 
@@ -132,7 +142,7 @@
   </div>
 </template>
 <script>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowLeft, Plus, Refresh, ArrowRight } from '@element-plus/icons-vue'
 import { keyAPI, userAPI } from '../api'
@@ -155,6 +165,9 @@ export default {
     const addFormRef = ref()
     const submitting = ref(false)
 
+    const currentPage = ref(1)
+    const pageSize = ref(6)
+
     const addForm = reactive({
       room: ''
     })
@@ -170,6 +183,11 @@ export default {
       ]
     }
 
+    const paginatedKeys = computed(() => {
+      const start = (currentPage.value - 1) * pageSize.value
+      return keys.value.slice(start, start + pageSize.value)
+    })
+
     const loadKeys = async () => {
       loading.value = true
       try {
@@ -179,6 +197,7 @@ export default {
         ])
         keys.value = keysData
         users.value = usersData
+        currentPage.value = 1
       } catch (error) {
         console.error('加载数据失败:', error)
         ElMessage.error('加载数据失败')
@@ -188,15 +207,29 @@ export default {
     }
 
     const isKeyBorrowed = (key) => {
-      return users.value.some(user => 
+      if (typeof key.is_borrowed === 'boolean') {
+        return key.is_borrowed
+      }
+      return users.value.some(user =>
         user.keys && user.keys.some(userKey => userKey.id === key.id)
       )
     }
 
     const getKeyBorrower = (key) => {
-      return users.value.find(user => 
+      const fromUsers = users.value.find(user =>
         user.keys && user.keys.some(userKey => userKey.id === key.id)
       )
+      if (fromUsers) {
+        return fromUsers
+      }
+      if (key.borrower_name) {
+        return { name: key.borrower_name }
+      }
+      return null
+    }
+
+    const handlePageChange = (page) => {
+      currentPage.value = page
     }
 
     const showKeyDetail = (key) => {
@@ -299,9 +332,13 @@ export default {
       addForm,
       addRules,
       submitting,
+      currentPage,
+      pageSize,
+      paginatedKeys,
       loadKeys,
       isKeyBorrowed,
       getKeyBorrower,
+      handlePageChange,
       showKeyDetail,
       showAddDialog,
       submitAddForm,
@@ -367,6 +404,13 @@ export default {
 .key-list {
   max-width: 400px;
   margin: 0 auto;
+}
+
+.pagination-container {
+  flex-shrink: 0;
+  padding: 10px 20px 0;
+  display: flex;
+  justify-content: center;
 }
 
 .key-card {

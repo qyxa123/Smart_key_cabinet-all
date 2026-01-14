@@ -50,12 +50,12 @@
           <div class="card-glow"></div>
         </div>
         
-        <div class="action-card secondary" @click="$router.push('/users')">
+        <div class="action-card secondary" @click="$router.push('/records')">
           <div class="card-bg-effect"></div>
           <div class="card-content">
-            <div class="card-icon">👥</div>
-            <h3>用户管理</h3>
-            <p>User Management</p>
+            <div class="card-icon">📋</div>
+            <h3>借用记录</h3>
+            <p>Borrow Records</p>
           </div>
           <div class="card-glow"></div>
         </div>
@@ -292,8 +292,15 @@ export default {
 .action-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr auto;
   gap: 15px;
   max-width: 450px;
+  margin: 0 auto;
+}
+
+.action-grid .action-card:nth-child(5) {
+  grid-column: 1 / -1;
+  max-width: 200px;
   margin: 0 auto;
 }
 

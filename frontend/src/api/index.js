@@ -44,10 +44,19 @@ export const userAPI = {
   deleteUser: (id) => api.delete(`/user/${id}`),
   
   // 借钥匙
-  borrowKey: (userId, keyId) => api.post(`/user/${userId}/borrow`, { key_id: keyId }),
+  borrowKey: (userId, keyId, reason) => api.post(`/user/${userId}/borrow`, { key_id: keyId, reason: reason }),
   
   // 还钥匙
-  returnKey: (userId, keyId) => api.post(`/user/${userId}/return`, { key_id: keyId })
+  returnKey: (userId, keyId) => api.post(`/user/${userId}/return`, { key_id: keyId }),
+  
+  // 获取用户借用记录
+  getUserBorrowRecords: (userId) => api.get(`/user/${userId}/borrow-records`),
+  
+  // 获取所有借用记录
+  getAllBorrowRecords: () => api.get('/user/borrow-records'),
+  
+  // 获取当前未归还的借用记录
+  getActiveBorrowRecords: () => api.get('/user/borrow-records/active')
 }
 
 // 钥匙相关API

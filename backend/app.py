@@ -10,15 +10,18 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'Flask-Admin', 'flask-ad
 
 from flask import Flask
 from flask_cors import CORS
+from flask_babel import Babel
 from extensions import db, ma, init_app
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from models import User, Key
+from models import User, Key, BorrowRecord
 from user import user_bp
 from key import key_bp
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'dev_secret_key_change_in_production')
+app.config.setdefault('BABEL_DEFAULT_LOCALE', 'zh_CN')
+babel = Babel(app)
 
 # Enable CORS for frontend
 CORS(app)
@@ -44,6 +47,7 @@ app.register_blueprint(key_bp, url_prefix='/api/key')
 admin = Admin(app, name='School Management')
 admin.add_view(ModelView(User, db.session, name='User Admin', endpoint='user_admin'))
 admin.add_view(ModelView(Key, db.session, name='Key Admin', endpoint='key_admin'))
+admin.add_view(ModelView(BorrowRecord, db.session, name='Borrow Records', endpoint='borrow_record_admin'))
 
 # Auto-create tables on startup
 with app.app_context():

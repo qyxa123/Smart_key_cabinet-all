@@ -1,155 +1,16 @@
 <template>
   <div class="page-container">
-    <!-- 背景动画 -->
-    <div class="bg-animation">
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-    </div>
-
-    <!-- 头部区域 -->
-    <div class="page-header">
-      <el-button @click="$router.push('/')" class="back-btn" circle>
-        <el-icon><ArrowLeft /></el-icon>
-      </el-button>
-      <div class="logo-icon">
-        <div class="key-icon">👥</div>
-      </div>
-      <h1 class="page-title">用户管理</h1>
-      <p class="page-subtitle">User Management</p>
-    </div>
-
-    <!-- 主要内容区域 -->
-    <div class="main-content">
-      <!-- 用户列表 -->
-      <div class="user-list" v-loading="loading">
-        <div 
-          v-for="user in users" 
-          :key="user.id"
-          class="user-card"
-          @click="showUserDetail(user)"
-        >
-          <div class="user-info">
-            <div class="user-name">{{ user.name }}</div>
-            <div class="user-details">
-              <span class="user-id">ID: {{ user.id }}</span>
-              <el-tag 
-                :type="user.identity === 'teacher' ? 'success' : 'primary'"
-                size="small"
-              >
-                {{ user.identity === 'teacher' ? '老师' : '学生' }}
-              </el-tag>
-            </div>
-            <div class="user-keys" v-if="user.keys && user.keys.length > 0">
-              <span class="keys-count">借用钥匙: {{ user.keys.length }}把</span>
-            </div>
-          </div>
-          <div class="user-actions">
-            <el-icon class="action-icon"><ArrowRight /></el-icon>
-          </div>
-        </div>
-        
-        <div v-if="users.length === 0 && !loading" class="empty-state">
-          <div class="empty-icon">👤</div>
-          <p>暂无用户数据</p>
-          <p class="empty-subtitle">No users found</p>
-        </div>
+    <div class="simple-message">
+      <div class="icon">ℹ️</div>
+      <div class="text">
+        <h2>用户管理功能已停用</h2>
+        <p>当前版本暂不提供独立的用户管理页面。</p>
+        <p>借钥匙时填写的姓名和信息仍然会被正常记录。</p>
       </div>
     </div>
-
-    <!-- 底部按钮 -->
-    <div class="bottom-actions">
-      <el-button @click="loadUsers" size="large" class="action-btn secondary">
-        <el-icon><Refresh /></el-icon>
-        刷新 Refresh
-      </el-button>
-      <el-button type="primary" @click="showAddDialog" size="large" class="action-btn primary">
-        <el-icon><Plus /></el-icon>
-        添加用户 Add User
-      </el-button>
-    </div>
-
-    <!-- 用户详情对话框 -->
-    <el-dialog
-      v-model="detailDialogVisible"
-      :title="selectedUser?.name + ' 的详细信息'"
-      width="90%"
-      :before-close="handleDetailClose"
-    >
-      <div v-if="selectedUser" class="user-detail">
-        <div class="detail-section">
-          <h4>基本信息</h4>
-          <p><strong>姓名:</strong> {{ selectedUser.name }}</p>
-          <p><strong>ID:</strong> {{ selectedUser.id }}</p>
-          <p><strong>身份:</strong> {{ selectedUser.identity === 'teacher' ? '老师' : '学生' }}</p>
-          <p v-if="selectedUser.grade"><strong>年级:</strong> {{ selectedUser.grade }}</p>
-          <p v-if="selectedUser.class_"><strong>班级:</strong> {{ selectedUser.class_ }}</p>
-          <p v-if="selectedUser.office"><strong>办公室:</strong> {{ selectedUser.office }}</p>
-        </div>
-        
-        <div class="detail-section" v-if="selectedUser.keys && selectedUser.keys.length > 0">
-          <h4>借用的钥匙</h4>
-          <div class="borrowed-keys-list">
-            <div v-for="key in selectedUser.keys" :key="key.id" class="borrowed-key-item">
-              <span>{{ key.room }}号房间</span>
-              <span class="key-id">ID: {{ key.id }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <template #footer>
-        <el-button @click="detailDialogVisible = false">关闭</el-button>
-        <el-button type="danger" @click="confirmDeleteUser">删除用户</el-button>
-      </template>
-    </el-dialog>
-
-    <!-- 添加用户对话框 -->
-    <el-dialog
-      v-model="addDialogVisible"
-      title="添加新用户"
-      width="90%"
-      :before-close="handleAddClose"
-    >
-      <el-form
-        ref="addFormRef"
-        :model="addForm"
-        :rules="addRules"
-        label-width="80px"
-      >
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="addForm.name" placeholder="请输入姓名" />
-        </el-form-item>
-        
-        <el-form-item label="身份" prop="identity">
-          <el-radio-group v-model="addForm.identity">
-            <el-radio label="student">学生</el-radio>
-            <el-radio label="teacher">老师</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        
-        <el-form-item label="年级" prop="grade" v-if="addForm.identity === 'student'">
-          <el-input v-model="addForm.grade" placeholder="请输入年级" />
-        </el-form-item>
-        
-        <el-form-item label="班级" prop="class_" v-if="addForm.identity === 'student'">
-          <el-input v-model="addForm.class_" placeholder="请输入班级" />
-        </el-form-item>
-        
-        <el-form-item label="办公室" prop="office" v-if="addForm.identity === 'teacher'">
-          <el-input v-model="addForm.office" placeholder="请输入办公室" />
-        </el-form-item>
-      </el-form>
-      
-      <template #footer>
-        <el-button @click="addDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitAddForm" :loading="submitting">确定</el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
+
 <script>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'

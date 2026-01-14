@@ -59,21 +59,33 @@
         <!-- 身份和班级 -->
         <div class="form-row">
           <el-form-item prop="identity" class="form-item">
-            <div class="input-wrapper">
-              <span class="input-icon">👤</span>
-              <el-select
-                v-model="borrowForm.identity"
-                placeholder="身份类型"
-                size="large"
-                style="width: 100%"
+            <div class="identity-card-group">
+              <div 
+                class="identity-card"
+                :class="{ active: borrowForm.identity === 'student' }"
+                @click="borrowForm.identity = 'student'"
               >
-                <el-option label="学生 Student" value="student" />
-                <el-option label="老师 Teacher" value="teacher" />
-              </el-select>
+                <div class="identity-icon">👤</div>
+                <div class="identity-text">
+                  <div class="identity-title">学生</div>
+                  <div class="identity-subtitle">Student</div>
+                </div>
+              </div>
+              <div 
+                class="identity-card"
+                :class="{ active: borrowForm.identity === 'teacher' }"
+                @click="borrowForm.identity = 'teacher'"
+              >
+                <div class="identity-icon">👨‍🏫</div>
+                <div class="identity-text">
+                  <div class="identity-title">老师</div>
+                  <div class="identity-subtitle">Teacher</div>
+                </div>
+              </div>
             </div>
           </el-form-item>
           
-          <el-form-item prop="classOrOffice" class="form-item">
+          <el-form-item prop="classOrOffice" class="form-item" v-if="borrowForm.identity === 'teacher'">
             <div class="input-wrapper">
               <span class="input-icon">🏫</span>
               <el-input
@@ -85,9 +97,9 @@
           </el-form-item>
         </div>
 
-        <!-- 钥匙选择 -->
+        <!-- 钥匙选择和借用理由 -->
         <div class="form-row">
-          <el-form-item prop="keyId" class="form-item full-width">
+          <el-form-item prop="keyId" class="form-item">
             <div class="input-wrapper">
               <span class="input-icon">🔑</span>
               <el-select
@@ -95,15 +107,36 @@
                 placeholder="选择钥匙 Select Key"
                 size="large"
                 style="width: 100%"
+                popper-class="borrow-select-dropdown"
                 @change="onKeySelect"
               >
                 <el-option
                   v-for="key in availableKeys"
                   :key="key.id"
-                  :label="`${key.room}号房间 Room ${key.room}`"
+                  :label="key.is_borrowed ? `${key.room}号房间 - 已借出 (${key.borrower_name || 'Unknown'})` : `${key.room}号房间 Room ${key.room}`"
                   :value="key.id"
+                  :disabled="key.is_borrowed"
+                  :class="key.is_borrowed ? 'option-borrowed' : 'option-available'"
                 />
               </el-select>
+            </div>
+          </el-form-item>
+        </div>
+
+        <!-- 借用理由 -->
+        <div class="form-row">
+          <el-form-item prop="reason" class="form-item full-width">
+            <div class="input-wrapper">
+              <span class="input-icon">📝</span>
+              <el-input
+                v-model="borrowForm.reason"
+                type="textarea"
+                placeholder="请输入借用理由 Please enter the reason for borrowing"
+                :rows="3"
+                size="large"
+                maxlength="200"
+                show-word-limit
+              />
             </div>
           </el-form-item>
         </div>
@@ -155,7 +188,8 @@ export default {
       studentId: '',
       grade: '',
       classOrOffice: '',
-      keyId: null
+      keyId: null,
+      reason: ''
     })
 
     const borrowRules = {
@@ -180,6 +214,9 @@ export default {
       ],
       keyId: [
         { required: true, message: '请选择要借用的钥匙', trigger: 'change' }
+      ],
+      reason: [
+        { required: true, message: '请输入借用理由', trigger: 'blur' }
       ]
     }
 
@@ -212,6 +249,7 @@ export default {
         const userData = {
           name: borrowForm.name,
           identity: borrowForm.identity,
+          student_id: borrowForm.studentId,
           grade: borrowForm.grade || null,
           class_: borrowForm.classOrOffice || null,
           office: borrowForm.identity === 'teacher' ? borrowForm.classOrOffice : null
@@ -221,7 +259,7 @@ export default {
         const user = await userAPI.createUser(userData)
         
         // 借钥匙
-        await userAPI.borrowKey(user.id, borrowForm.keyId)
+        await userAPI.borrowKey(user.id, borrowForm.keyId, borrowForm.reason)
 
         ElMessage.success('钥匙借用申请提交成功！')
         
@@ -256,7 +294,8 @@ export default {
         studentId: '',
         grade: '',
         classOrOffice: '',
-        keyId: null
+        keyId: null,
+        reason: ''
       })
     }
 
@@ -440,6 +479,61 @@ export default {
   margin-bottom: 20px;
 }
 
+.identity-card-group {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.identity-card {
+  flex: 1;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.3));
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
+}
+
+.identity-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 255, 255, 0.25);
+}
+
+.identity-card.active {
+  border-color: rgba(0, 255, 255, 0.8);
+  box-shadow:
+    0 0 18px rgba(0, 255, 255, 0.35),
+    0 6px 20px rgba(0, 0, 0, 0.6);
+  background: radial-gradient(circle at top left, rgba(0, 255, 255, 0.35), rgba(0, 0, 0, 0.7));
+}
+
+.identity-icon {
+  font-size: 20px;
+  filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.7));
+}
+
+.identity-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.identity-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.identity-subtitle {
+  font-size: 11px;
+  color: #66ccff;
+  opacity: 0.9;
+}
+
 .form-item {
   flex: 1;
   margin-bottom: 0;
@@ -525,7 +619,7 @@ export default {
   background: rgba(255, 255, 255, 0.05);
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
-  height: 50px;
+  height: 60px;
   padding-left: 50px !important;
   transition: all 0.3s ease;
   box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
@@ -573,7 +667,14 @@ export default {
 }
 
 :deep(.el-select .el-input) {
-  height: 50px;
+  height: 60px;
+}
+
+:deep(.el-select__wrapper) {
+  border-radius: 12px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  min-height: 60px !important;
 }
 
 :deep(.el-select .el-input__wrapper) {
@@ -582,9 +683,19 @@ export default {
   background: rgba(255, 255, 255, 0.05) !important;
   border: 2px solid rgba(255, 255, 255, 0.2) !important;
   border-radius: 12px !important;
-  height: 50px !important;
+  height: 60px !important;
   transition: all 0.3s ease !important;
   box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+:deep(.el-select__selected-item) {
+  color: #00ffff !important;
+  font-weight: 500 !important;
+  font-size: 16px !important;
+}
+
+:deep(.el-select__selected-item.el-select__placeholder) {
+  color: #666 !important;
 }
 
 :deep(.el-select .el-input__wrapper:hover) {
@@ -604,10 +715,10 @@ export default {
   padding-left: 0 !important;
   padding-right: 0 !important;
   color: #ffffff !important;
-  font-size: 15px !important;
+  font-size: 16px !important;
   font-weight: 500 !important;
-  height: 46px !important;
-  line-height: 46px !important;
+  height: 56px !important;
+  line-height: 56px !important;
   background: transparent !important;
 }
 
@@ -616,14 +727,15 @@ export default {
   font-weight: 400 !important;
 }
 
-:deep(.el-select .el-select__caret) {
+:deep(.el-select .el-select__caret),
+:deep(.el-select .el-select__icon) {
   color: #00ffff !important;
   font-size: 14px !important;
-  right: 12px !important;
 }
 
 /* 让下拉箭头更像普通输入框的装饰 */
-:deep(.el-select .el-select__caret.is-reverse) {
+:deep(.el-select .el-select__caret.is-reverse),
+:deep(.el-select .el-select__icon.is-reverse) {
   transform: rotateZ(180deg) !important;
 }
 
@@ -660,6 +772,54 @@ export default {
   color: #00ffff !important;
 }
 
+:deep(.el-select-dropdown__item.option-available) {
+  color: #00ffff !important;
+}
+
+:deep(.el-select-dropdown__item.option-borrowed) {
+  color: #888888 !important;
+}
+
+:deep(.el-textarea__inner) {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  padding: 15px 50px 15px 50px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+  resize: vertical !important;
+  min-height: 80px !important;
+}
+
+:deep(.el-textarea__inner:hover) {
+  border-color: rgba(0, 255, 255, 0.5) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+:deep(.el-textarea__inner:focus) {
+  border-color: #00ffff !important;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 255, 0.3),
+    inset 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+:deep(.el-textarea__inner::placeholder) {
+  color: #666 !important;
+  font-weight: 400 !important;
+}
+
+:deep(.el-input__count) {
+  background: rgba(0, 0, 0, 0.3) !important;
+  color: #00ffff !important;
+  border-radius: 8px !important;
+  padding: 2px 8px !important;
+  font-size: 12px !important;
+}
+
 @media (max-width: 480px) {
   .form-row {
     flex-direction: column;
@@ -677,5 +837,51 @@ export default {
   .action-btn {
     height: 50px;
   }
+}
+</style>
+
+<style>
+/* 全局样式覆盖 - 用于 Element Plus 下拉菜单 */
+.borrow-select-dropdown.el-select-dropdown {
+  background: rgba(10, 14, 39, 0.98) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 2px solid rgba(0, 255, 255, 0.3) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+}
+
+.borrow-select-dropdown .el-select-dropdown__item {
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+  padding: 12px 20px !important;
+  font-size: 15px !important;
+}
+
+.borrow-select-dropdown .el-select-dropdown__item:hover,
+.borrow-select-dropdown .el-select-dropdown__item.is-hovering {
+  background: rgba(0, 255, 255, 0.15) !important;
+}
+
+.borrow-select-dropdown .el-select-dropdown__item.selected {
+  background: rgba(0, 255, 255, 0.25) !important;
+  font-weight: 600 !important;
+}
+
+/* 可用钥匙 - 亮青色 */
+.borrow-select-dropdown .el-select-dropdown__item.option-available {
+  color: #00ffff !important;
+}
+
+.borrow-select-dropdown .el-select-dropdown__item.option-available.selected {
+  color: #00ffff !important;
+}
+
+/* 已借出钥匙 - 灰色 */
+.borrow-select-dropdown .el-select-dropdown__item.option-borrowed {
+  color: #666666 !important;
+}
+
+.borrow-select-dropdown .el-select-dropdown__item.option-borrowed.is-disabled {
+  color: #666666 !important;
 }
 </style>

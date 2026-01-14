@@ -1,7 +1,8 @@
 from flask import Blueprint, request
 from extensions import db
-from models import User, Key
-from schemas import user_schema, users_schema
+from models import User, Key, BorrowRecord
+from schemas import user_schema, users_schema, borrow_record_schema, borrow_records_schema
+from datetime import datetime
 
 user_bp = Blueprint('user', __name__)
 
@@ -46,18 +47,50 @@ def delete_user(id):
 def borrow_key(id):
     user = User.query.get_or_404(id)
     key_id = request.json.get('key_id')
+    reason = request.json.get('reason')
+    
     if key_id is None:
         return {'error': 'key_id is required'}, 400
+    if not reason or not reason.strip():
+        return {'error': 'reason is required'}, 400
+        
     try:
         key_id = int(key_id)
     except (TypeError, ValueError):
         return {'error': 'key_id must be integer'}, 400
+        
     key = Key.query.get_or_404(key_id)
-    if key in user.keys:
-        return {'error': 'key already borrowed'}, 400
-    user.keys.append(key)
+    
+    # 检查钥匙是否已被借用（查看是否有未归还的记录）
+    existing_record = BorrowRecord.query.filter_by(
+        key_id=key_id, 
+        status='borrowed'
+    ).first()
+    
+    if existing_record:
+        return {'error': f'钥匙已被 {existing_record.user.name} 借用'}, 400
+    
+    # 创建借用记录
+    borrow_record = BorrowRecord(
+        user_id=user.id,
+        key_id=key_id,
+        reason=reason.strip(),
+        borrow_time=datetime.utcnow(),
+        status='borrowed'
+    )
+    
+    # 添加到多对多关系（保持兼容性）
+    if key not in user.keys:
+        user.keys.append(key)
+    
+    db.session.add(borrow_record)
     db.session.commit()
-    return user_schema.jsonify(user)
+    
+    return {
+        'message': '钥匙借用成功',
+        'user': user_schema.dump(user),
+        'borrow_record': borrow_record_schema.dump(borrow_record)
+    }
 
 # POST /user/<id>/return 还钥匙
 @user_bp.route('/<int:id>/return', methods=['POST'])
@@ -71,9 +104,49 @@ def return_key(id):
     except (TypeError, ValueError):
         return {'error': 'key_id must be integer'}, 400
     key = Key.query.get_or_404(key_id)
-    if key not in user.keys:
-        return {'error': 'key not borrowed by this user'}, 400
-    user.keys.remove(key)
+    
+    # 查找未归还的借用记录
+    borrow_record = BorrowRecord.query.filter_by(
+        user_id=user.id,
+        key_id=key_id,
+        status='borrowed'
+    ).first()
+    
+    if not borrow_record:
+        return {'error': '未找到该用户的借用记录'}, 400
+    
+    # 更新借用记录
+    borrow_record.return_time = datetime.utcnow()
+    borrow_record.status = 'returned'
+    
+    # 从多对多关系中移除（保持兼容性）
+    if key in user.keys:
+        user.keys.remove(key)
+    
     db.session.commit()
-    return user_schema.jsonify(user)
+    
+    return {
+        'message': '钥匙归还成功',
+        'user': user_schema.dump(user),
+        'borrow_record': borrow_record_schema.dump(borrow_record)
+    }
+
+# GET /user/<id>/borrow-records 获取用户的借用记录
+@user_bp.route('/<int:id>/borrow-records', methods=['GET'])
+def get_user_borrow_records(id):
+    user = User.query.get_or_404(id)
+    records = user.borrow_records.order_by(BorrowRecord.borrow_time.desc()).all()
+    return borrow_records_schema.jsonify(records)
+
+# GET /user/borrow-records 获取所有借用记录
+@user_bp.route('/borrow-records', methods=['GET'])
+def get_all_borrow_records():
+    records = BorrowRecord.query.order_by(BorrowRecord.borrow_time.desc()).all()
+    return borrow_records_schema.jsonify(records)
+
+# GET /user/borrow-records/active 获取当前未归还的借用记录
+@user_bp.route('/borrow-records/active', methods=['GET'])
+def get_active_borrow_records():
+    records = BorrowRecord.query.filter_by(status='borrowed').order_by(BorrowRecord.borrow_time.desc()).all()
+    return borrow_records_schema.jsonify(records)
 

@@ -147,7 +147,17 @@ def return_key(user_id):
 # 钥匙相关API
 @app.route('/api/key/', methods=['GET'])
 def get_keys():
-    return jsonify(keys_data)
+    # 动态添加状态信息
+    result = []
+    for k in keys_data:
+        k_copy = k.copy()
+        # 检查是否有用户正在借用这把钥匙
+        k_copy['is_borrowed'] = len(k.get('users', [])) > 0
+        if k_copy['is_borrowed']:
+            # 获取借用人姓名
+            k_copy['borrower_name'] = k['users'][0].get('name', 'Unknown')
+        result.append(k_copy)
+    return jsonify(result)
 
 @app.route('/api/key/', methods=['POST'])
 def create_key():
