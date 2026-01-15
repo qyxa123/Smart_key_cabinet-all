@@ -1,133 +1,160 @@
-# 济外国际智能钥匙柜管理系统
+# 济外国际智能钥匙柜管理系统 (Smart Key Cabinet System)
 
-基于 Flask + Vue 3 的智能钥匙柜管理系统，覆盖钥匙借用/归还、用户与钥匙管理、借用记录追踪，并提供管理后台。
+> 一个基于 Flask + Vue 3 的现代化智能钥匙柜管理系统，专为济外国际学校设计。支持扫码借还、实时状态追踪、用户权限管理以及可视化的数据后台。
 
-## 功能亮点
-- 借钥匙流程：支持扫码/输入学号借用，强制填写借用理由
-- 还钥匙流程：简化操作，支持一键查看所有未归还钥匙并快速归还
-- 实时追踪：借用记录实时更新，状态一目了然
-- 用户与钥匙管理：完整的增删改查功能
-- 管理后台：基于 Flask-Admin 的强大后台管理系统
+---
 
-## 技术栈
-- 后端：Flask、SQLAlchemy、Flask-Admin、SQLite（默认）/ MySQL
-- 前端：Vue 3、Element Plus、Vue Router、Vite
+## 🎯 项目概述
 
-## 目录结构
-```
+本系统旨在解决传统钥匙管理中“记录难、查找难、追踪难”的痛点。通过软硬件结合（可选）的方式，实现钥匙借用、归还的全流程数字化管理。无论是学生还是老师，都能通过简洁的 Web 界面快速完成操作，管理员则可以通过后台实时监控每一把钥匙的去向。
+
+## ✨ 核心功能
+
+### 🔑 智能借还
+- **极速借用**：支持输入学号/工号或扫码快速借用，强制填写借用理由，确保责任到人。
+- **简化归还**：一键查询名下未归还钥匙，点选即可归还，无需重复输入繁琐信息。
+- **状态追踪**：借出时间、归还时间、经手人全记录，历史数据可追溯。
+
+### 👥 用户与权限
+- **多角色支持**：区分学生与教师身份，支持不同的业务逻辑。
+- **信息管理**：完整的用户增删改查（CRUD），支持批量导入（需扩展）。
+
+### 📊 实时监控与管理
+- **可视化看板**：首页实时显示在库钥匙数量、借出数量。
+- **后台管理系统**：集成 Flask-Admin，提供强大的数据库底层管理能力。
+- **设备管理**：支持钥匙与房间号的绑定与解绑。
+
+## 🏗️ 技术架构
+
+### 后端 (Backend)
+- **核心框架**: Flask (Python)
+- **数据库**: SQLAlchemy (ORM), SQLite (默认) / MySQL (生产环境支持)
+- **管理后台**: Flask-Admin
+- **接口服务**: RESTful API
+
+### 前端 (Frontend)
+- **核心框架**: Vue 3 (Composition API)
+- **构建工具**: Vite
+- **UI 组件库**: Element Plus
+- **路由管理**: Vue Router 4
+- **HTTP 客户端**: Axios
+
+## 📁 目录结构
+
+```text
 智能钥匙柜管理系统/
-├── backend/                    # 后端服务 (Flask)
-│   ├── app.py                  # 完整版API服务（SQLite/MySQL）
-│   ├── simple_app.py           # 简化版API服务（内存数据）
-│   ├── models.py               # 数据模型
-│   ├── requirements.txt        # Python依赖
-│   └── README.md               # 后端说明文档
-├── frontend/                   # 前端应用 (Vue3)
-│   ├── src/                    # 源代码
-│   ├── package.json            # 前端依赖
-│   ├── vite.config.js          # 构建与代理配置
-│   └── README.md               # 前端说明文档
-├── legacy-html/                # 原始HTML版本（已停止维护）
-├── start-dev.sh                # 简化版启动脚本
-├── start-new.sh                # 完整版启动脚本
-├── QUICK_START.md              # 快速启动指南
-├── NEW_FEATURES.md             # 新功能说明
-└── README.md                   # 项目说明
+├── backend/                    # 🔧 后端服务 (Flask)
+│   ├── app.py                  # 完整版 API 服务 (SQLite/MySQL)
+│   ├── simple_app.py           # 简化版 API 服务 (内存数据)
+│   ├── models.py               # 数据库模型定义
+│   ├── requirements.txt        # Python 依赖清单
+│   └── school.db               # 默认 SQLite 数据库文件
+├── frontend/                   # 🎨 前端应用 (Vue 3)
+│   ├── src/                    # 源代码目录
+│   │   ├── api/                # API 接口封装
+│   │   ├── views/              # 页面组件 (借还、管理等)
+│   │   └── App.vue             # 根组件
+│   ├── vite.config.js          # Vite 构建与代理配置
+│   └── package.json            # NPM 依赖配置
+├── legacy-html/                # 📜 历史版本 (纯 HTML/jQuery，已归档)
+├── start-new.sh                # 🚀 [推荐] 一键启动脚本 (完整版)
+├── start-dev.sh                # 🛠 开发启动脚本 (简化版)
+└── README.md                   # 项目说明文档
 ```
 
-## 快速开始
+## 🚀 快速开始 (Quick Start)
 
 ### 环境要求
-- Python 3.8+
-- Node.js 16+
+- **Python**: 3.8+
+- **Node.js**: 16+
+- **Git**: 版本控制
 
-### 一键启动（推荐）
+### 方式一：一键启动（推荐）
 
-#### 完整版（SQLite 默认）
+我们在根目录下提供了便捷的启动脚本，会自动处理端口和依赖检查。
+
+#### 启动完整版 (SQLite 数据库)
 ```bash
 ./start-new.sh
 ```
-默认端口：
-- 前端：http://localhost:3000
-- 后端：http://localhost:5002
-- 管理后台：http://localhost:5002/admin
+此命令将启动：
+- **前端页面**: http://localhost:3000
+- **后端 API**: http://localhost:5002
+- **管理后台**: http://localhost:5002/admin
 
-#### 简化版（内存数据）
+#### 启动简化版 (内存数据，无需数据库)
 ```bash
 ./start-dev.sh
 ```
-端口以脚本输出为准。如需调整，请设置 `PORT` 环境变量并同步修改 `frontend/vite.config.js` 代理地址。
 
-### 手动启动
+### 方式二：手动分步启动
 
-#### 1) 后端（完整版）
+如果您需要更精细的控制，可以分别启动前后端。
+
+#### 1. 启动后端
 ```bash
 cd backend
 pip3 install -r requirements.txt
-PORT=5002 python3 app.py
+# 设置端口为 5002 以匹配前端代理
+export PORT=5002 
+python3 app.py
 ```
 
-#### 2) 后端（简化版）
-```bash
-cd backend
-pip3 install flask flask-cors
-PORT=5002 python3 simple_app.py
-```
-
-#### 3) 前端
+#### 2. 启动前端
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-## 数据库与配置
+## 🔌 API 接口概览
 
-`backend/app.py` 默认使用 SQLite 数据库（`backend/school.db`）。如需切换到 MySQL，设置环境变量：
+系统采用标准 RESTful 风格设计。
+
+| 模块 | 方法 | 路径 | 描述 |
+|------|------|------|------|
+| **用户** | GET | `/api/user/` | 获取所有用户列表 |
+| | POST | `/api/user/` | 创建新用户 |
+| | POST | `/api/user/<id>/borrow` | 用户借用钥匙 |
+| | GET | `/api/user/borrow-records/active` | 获取所有未归还记录 |
+| | POST | `/api/user/<id>/return` | 用户归还钥匙 |
+| **钥匙** | GET | `/api/key/` | 获取所有钥匙状态 |
+| | POST | `/api/key/` | 新增钥匙 |
+
+## ⚙️ 配置说明
+
+### 数据库切换
+默认使用 SQLite (`backend/school.db`)，开箱即用。如需切换到 MySQL，请设置环境变量：
+```bash
+export DATABASE_URL="mysql+pymysql://user:password@localhost:3306/dbname?charset=utf8mb4"
 ```
-DATABASE_URL=mysql+pymysql://用户名:密码@localhost:3306/数据库名?charset=utf8mb4
-```
 
-## API 概览
+### 端口配置
+- **前端代理**: 修改 `frontend/vite.config.js` 中的 `server.proxy`。
+- **后端端口**: 修改启动脚本或环境变量 `PORT`。
 
-### 用户相关
-- `GET /api/user/` - 获取所有用户
-- `POST /api/user/` - 创建用户
-- `POST /api/user/:id/borrow` - 借钥匙
-- `POST /api/user/:id/return` - 还钥匙
-- `GET /api/user/borrow-records` - 借用记录
-- `GET /api/user/borrow-records/active` - 当前未归还记录
-
-### 钥匙相关
-- `GET /api/key/` - 获取所有钥匙
-- `POST /api/key/` - 创建钥匙
-- `PUT /api/key/:id` - 更新钥匙
-- `DELETE /api/key/:id` - 删除钥匙
-
-## 版本控制与部署
+## 📦 版本控制与部署
 
 ### 推送到 GitHub
-1. 在 GitHub 上创建一个新的空仓库
-2. 在本地初始化并推送：
+如果您想将代码托管到 GitHub，请执行以下命令：
+
 ```bash
+# 1. 初始化 Git (如果尚未初始化)
 git init
 git add .
-git commit -m "Initial commit: 智能钥匙柜管理系统 v1.0"
-git branch -M main
-git remote add origin https://github.com/你的用户名/你的仓库名.git
+git commit -m "feat: 完成智能钥匙柜系统核心功能"
+
+# 2. 关联远程仓库
+git remote add origin https://github.com/qyxa123/Smart_key_cabinet-all.git
+# 如果已存在 origin，使用 set-url 修改：
+# git remote set-url origin https://github.com/qyxa123/Smart_key_cabinet-all.git
+
+# 3. 推送代码
 git push -u origin main
 ```
 
-## 文档与测试数据
-- `QUICK_START.md`：启动与功能速览
-- `NEW_FEATURES.md`：借用记录、借用理由等新功能说明
-- `test_setup.py`：生成测试数据
+## 📄 许可证
+本项目仅用于教育和学习目的，版权归济外国际所有。
 
-## 开发说明
-前后端分离，推荐保持 `frontend/vite.config.js` 的代理端口与后端一致。若修改端口，请同步调整：
-- 前端启动端口
-- 后端 `PORT`
-- Vite 代理 `target`
-
-## 许可证
-本项目仅用于教育目的，版权归济外国际所有。
+---
+**Designed with ❤️ for JFLSIC**
