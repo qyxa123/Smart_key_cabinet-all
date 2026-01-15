@@ -132,28 +132,24 @@ export DATABASE_URL="mysql+pymysql://user:password@localhost:3306/dbname?charset
 - **前端代理**: 修改 `frontend/vite.config.js` 中的 `server.proxy`。
 - **后端端口**: 修改启动脚本或环境变量 `PORT`。
 
-## 📦 版本控制与部署
+## 📦 版本控制与协作
 
-### 推送到 GitHub
-如果您想将代码托管到 GitHub，请执行以下命令：
+本项目已托管在 GitHub：
 
-```bash
-# 1. 初始化 Git (如果尚未初始化)
-git init
-git add .
-git commit -m "feat: 完成智能钥匙柜系统核心功能"
+- 仓库地址：https://github.com/qyxa123/Smart_key_cabinet-all
 
-# 2. 关联远程仓库
-git remote add origin https://github.com/qyxa123/Smart_key_cabinet-all.git
-# 如果已存在 origin，使用 set-url 修改：
-# git remote set-url origin https://github.com/qyxa123/Smart_key_cabinet-all.git
+一般使用者只需要：
+- 直接 `git clone` 本仓库；
+- 按“快速开始”章节启动前后端；
+- 无需再次执行 `git init`、`git remote add` 等初始化命令。
 
-# 3. 推送代码
-git push -u origin main
-```
+协作方式：
+- 团队成员：在该仓库创建分支、提交代码并合并。
+- 外部贡献者：Fork 仓库后，通过 Pull Request 提交修改。
 
 ## 📄 许可证
-本项目仅用于教育和学习目的，版权归济外国际所有。
+
+本项目采用 [MIT License](LICENSE) 开源许可证。
 
 ---
 **Designed with ❤️ for JFLSIC**
