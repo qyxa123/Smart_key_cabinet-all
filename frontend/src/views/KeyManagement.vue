@@ -76,10 +76,6 @@
         <el-icon><Refresh /></el-icon>
         刷新 Refresh
       </el-button>
-      <el-button type="primary" @click="showAddDialog" size="large" class="action-btn primary">
-        <el-icon><Plus /></el-icon>
-        添加钥匙 Add Key
-      </el-button>
     </div>
 
     <!-- 钥匙详情对话框 -->
@@ -112,39 +108,44 @@
       
       <template #footer>
         <el-button @click="detailDialogVisible = false">关闭</el-button>
-        <el-button type="danger" @click="confirmDeleteKey">删除钥匙</el-button>
       </template>
     </el-dialog>
 
-    <!-- 添加钥匙对话框 -->
+    <!-- 登录验证对话框 -->
     <el-dialog
-      v-model="addDialogVisible"
-      title="添加新钥匙"
+      v-model="loginDialogVisible"
+      title="管理员登录"
       width="90%"
-      :before-close="handleAddClose"
+      :show-close="false"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      center
     >
-      <el-form
-        ref="addFormRef"
-        :model="addForm"
-        :rules="addRules"
-        label-width="80px"
-      >
-        <el-form-item label="房间号" prop="room">
-          <el-input v-model="addForm.room" placeholder="请输入房间号" />
-        </el-form-item>
-      </el-form>
-      
+      <div class="login-container">
+        <el-input
+          v-model="password"
+          type="password"
+          placeholder="请输入管理员密码"
+          show-password
+          @keyup.enter="handleLogin"
+        >
+          <template #prefix>
+            <el-icon><Lock /></el-icon>
+          </template>
+        </el-input>
+      </div>
       <template #footer>
-        <el-button @click="addDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitAddForm" :loading="submitting">确定</el-button>
+        <el-button @click="goBack">返回</el-button>
+        <el-button type="primary" @click="handleLogin">登录</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 <script>
 import { ref, reactive, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { ArrowLeft, Plus, Refresh, ArrowRight } from '@element-plus/icons-vue'
+import { ArrowLeft, Plus, Refresh, ArrowRight, Lock } from '@element-plus/icons-vue'
 import { keyAPI, userAPI } from '../api'
 
 export default {
@@ -153,40 +154,41 @@ export default {
     ArrowLeft,
     Plus,
     Refresh,
-    ArrowRight
+    ArrowRight,
+    Lock
   },
   setup() {
+    const router = useRouter()
     const keys = ref([])
     const users = ref([])
     const loading = ref(false)
     const detailDialogVisible = ref(false)
-    const addDialogVisible = ref(false)
+    const loginDialogVisible = ref(true)
     const selectedKey = ref(null)
-    const addFormRef = ref()
-    const submitting = ref(false)
+    const password = ref('')
 
     const currentPage = ref(1)
     const pageSize = ref(12)
-
-    const addForm = reactive({
-      room: ''
-    })
-
-    const addRules = {
-      room: [
-        { required: true, message: '请输入房间号', trigger: 'blur' },
-        { 
-          pattern: /^\d{3}$/, 
-          message: '房间号必须是3位数字，如：101、205', 
-          trigger: 'blur' 
-        }
-      ]
-    }
 
     const paginatedKeys = computed(() => {
       const start = (currentPage.value - 1) * pageSize.value
       return keys.value.slice(start, start + pageSize.value)
     })
+
+    const handleLogin = () => {
+      if (password.value === 'admin123') {
+        loginDialogVisible.value = false
+        loadKeys()
+        ElMessage.success('登录成功')
+      } else {
+        ElMessage.error('密码错误')
+        password.value = ''
+      }
+    }
+
+    const goBack = () => {
+      router.push('/')
+    }
 
     const loadKeys = async () => {
       loading.value = true
@@ -237,114 +239,31 @@ export default {
       detailDialogVisible.value = true
     }
 
-    const showAddDialog = () => {
-      resetAddForm()
-      addDialogVisible.value = true
-    }
-
-    const submitAddForm = async () => {
-      if (!addFormRef.value) return
-
-      try {
-        await addFormRef.value.validate()
-        submitting.value = true
-
-        const keyData = {
-          room: addForm.room
-        }
-
-        await keyAPI.createKey(keyData)
-        ElMessage.success('钥匙添加成功')
-        addDialogVisible.value = false
-        loadKeys()
-      } catch (error) {
-        console.error('添加钥匙失败:', error)
-        if (error.response?.status === 400) {
-          ElMessage.error('该房间号的钥匙已存在')
-        } else {
-          ElMessage.error('添加钥匙失败')
-        }
-      } finally {
-        submitting.value = false
-      }
-    }
-
-    const confirmDeleteKey = async () => {
-      if (!selectedKey.value) return
-
-      if (isKeyBorrowed(selectedKey.value)) {
-        ElMessage.warning('该钥匙正在被借用，无法删除')
-        return
-      }
-
-      try {
-        await ElMessageBox.confirm(
-          `确定要删除 "${selectedKey.value.room}" 号房间的钥匙吗？`,
-          '确认删除',
-          {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }
-        )
-
-        await keyAPI.deleteKey(selectedKey.value.id)
-        ElMessage.success('钥匙删除成功')
-        detailDialogVisible.value = false
-        loadKeys()
-      } catch (error) {
-        if (error !== 'cancel') {
-          console.error('删除钥匙失败:', error)
-          ElMessage.error('删除钥匙失败')
-        }
-      }
-    }
-
-    const resetAddForm = () => {
-      addForm.room = ''
-      if (addFormRef.value) {
-        addFormRef.value.resetFields()
-      }
-    }
-
     const handleDetailClose = () => {
       detailDialogVisible.value = false
       selectedKey.value = null
     }
 
-    const handleAddClose = () => {
-      addDialogVisible.value = false
-      resetAddForm()
-    }
-
-    onMounted(() => {
-      loadKeys()
-    })
+    // onMounted(() => loadKeys()) // Removed auto load, now triggered after login
 
     return {
       keys,
-      users,
       loading,
       detailDialogVisible,
-      addDialogVisible,
+      loginDialogVisible,
       selectedKey,
-      addFormRef,
-      addForm,
-      addRules,
-      submitting,
+      password,
       currentPage,
       pageSize,
       paginatedKeys,
+      handleLogin,
+      goBack,
       loadKeys,
       isKeyBorrowed,
       getKeyBorrower,
       handlePageChange,
       showKeyDetail,
-      showAddDialog,
-      submitAddForm,
-      confirmDeleteKey,
-      handleDetailClose,
-      handleAddClose
+      handleDetailClose
     }
   }
 }
