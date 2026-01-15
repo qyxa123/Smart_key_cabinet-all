@@ -19,8 +19,8 @@ echo "✅ 环境检查通过"
 # 启动后端
 echo "🚀 启动后端服务..."
 cd backend
-echo "🔧 启动Flask后端服务器 (端口: 5001)..."
-PORT=5001 python3 app.py &
+echo "🔧 启动Flask后端服务器 (端口: 5002)..."
+PORT=5002 python3 app.py &
 BACKEND_PID=$!
 
 cd ..
@@ -37,16 +37,16 @@ if [ ! -d "node_modules" ]; then
     npm install
 fi
 
-echo "🔧 启动Vue3前端服务器 (端口: 3001)..."
+echo "🔧 启动Vue3前端服务器 (端口: 3000)..."
 npm run dev &
 FRONTEND_PID=$!
 
 echo ""
 echo "🎉 开发环境启动完成！"
 echo "============================================"
-echo "📱 前端地址: http://localhost:3001"
-echo "🔧 后端API: http://localhost:5001"
-echo "🔐 管理后台: http://localhost:5001/admin"
+echo "📱 前端地址: http://localhost:3000"
+echo "🔧 后端API: http://localhost:5002"
+echo "🔐 管理后台: http://localhost:5002/admin"
 echo ""
 echo "按 Ctrl+C 停止所有服务"
 

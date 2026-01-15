@@ -2,7 +2,7 @@ from flask import Blueprint, request
 from extensions import db
 from models import User, Key, BorrowRecord
 from schemas import user_schema, users_schema, borrow_record_schema, borrow_records_schema
-from datetime import datetime
+from datetime import datetime, timedelta
 
 user_bp = Blueprint('user', __name__)
 
@@ -75,7 +75,7 @@ def borrow_key(id):
         user_id=user.id,
         key_id=key_id,
         reason=reason.strip(),
-        borrow_time=datetime.utcnow(),
+        borrow_time=datetime.utcnow() + timedelta(hours=8),
         status='borrowed'
     )
     
@@ -116,7 +116,7 @@ def return_key(id):
         return {'error': '未找到该用户的借用记录'}, 400
     
     # 更新借用记录
-    borrow_record.return_time = datetime.utcnow()
+    borrow_record.return_time = datetime.utcnow() + timedelta(hours=8)
     borrow_record.status = 'returned'
     
     # 从多对多关系中移除（保持兼容性）

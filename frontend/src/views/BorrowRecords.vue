@@ -115,7 +115,7 @@ export default {
     const records = ref([])
     const filterType = ref('all')
     const currentPage = ref(1)
-    const pageSize = ref(5)
+    const pageSize = ref(8)
 
     const loadRecords = async () => {
       loading.value = true
@@ -351,25 +351,74 @@ export default {
 }
 
 .records-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 15px;
+  padding-bottom: 10px;
 }
 
 .pagination-container {
   flex-shrink: 0;
-  padding-top: 10px;
+  padding: 10px 20px 20px;
   display: flex;
   justify-content: center;
+}
+
+/* 增强分页按钮样式 */
+:deep(.el-pagination.is-background .el-pager li:not(.is-disabled)) {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  font-size: 16px;
+  min-width: 40px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 8px;
+  margin: 0 5px;
+}
+
+:deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
+  background-color: #00ffff;
+  color: #000;
+  font-weight: bold;
+  border-color: #00ffff;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+:deep(.el-pagination.is-background .btn-prev),
+:deep(.el-pagination.is-background .btn-next) {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  min-width: 40px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+:deep(.el-pagination.is-background .btn-prev:disabled),
+:deep(.el-pagination.is-background .btn-next:disabled) {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #666;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .record-card {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 15px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.record-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .record-card.active {
@@ -387,7 +436,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .user-info {
@@ -426,11 +475,7 @@ export default {
   border: 1px solid rgba(0, 255, 0, 0.5);
 }
 
-.record-body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+
 
 .key-info {
   color: #00ffff;
@@ -439,9 +484,12 @@ export default {
 
 .reason-section {
   background: rgba(0, 0, 0, 0.2);
-  padding: 12px;
-  border-radius: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
   border-left: 3px solid #00ffff;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .reason-label {
@@ -453,19 +501,26 @@ export default {
 .reason-text {
   color: #ffffff;
   margin: 5px 0 0 0;
-  line-height: 1.4;
+  line-height: 1.3;
+  font-size: 13px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .time-info {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
+  margin-top: auto;
 }
 
 .time-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 12px;
 }
 
 .time-label {

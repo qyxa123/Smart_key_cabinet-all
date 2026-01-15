@@ -1,0 +1,104 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-sm-12">
+            <h1 class="display-4">智能钥匙柜管理后台</h1>
+            <p class="lead">欢迎回来，这里是系统概览。</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- 统计卡片 -->
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">总用户数</div>
+                <div class="card-body">
+                    <h2 class="card-title">{{ user_count }}</h2>
+                    <p class="card-text">注册在案的师生总数</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">钥匙总数</div>
+                <div class="card-body">
+                    <h2 class="card-title">{{ key_count }}</h2>
+                    <p class="card-text">系统中管理的钥匙总数</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">当前借出</div>
+                <div class="card-body">
+                    <h2 class="card-title">{{ active_borrow_count }}</h2>
+                    <p class="card-text">尚未归还的钥匙数量</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">最近借用记录</h5>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>用户</th>
+                                <th>钥匙/房间</th>
+                                <th>借用时间</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in recent_records %}
+                            <tr>
+                                <td>{{ record.user.name }}</td>
+                                <td>{{ record.key.room }}</td>
+                                <td>{{ record.borrow_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    {% if record.status == 'borrowed' %}
+                                    <span class="badge badge-warning">未归还</span>
+                                    {% else %}
+                                    <span class="badge badge-success">已归还</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center">暂无记录</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{{ url_for('borrow_record_admin.index_view') }}" class="btn btn-sm btn-secondary">查看所有记录</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border: none;
+        border-radius: 8px;
+    }
+    .card-header {
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        font-weight: bold;
+    }
+    .display-4 {
+        font-size: 2.5rem;
+        font-weight: 300;
+    }
+</style>
+{% endblock %}

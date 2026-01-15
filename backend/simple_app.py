@@ -201,8 +201,11 @@ def delete_key(key_id):
     keys_data = [k for k in keys_data if k['id'] != key_id]
     return '', 204
 
+import os
+
 if __name__ == "__main__":
-    print("🔑 启动智能钥匙柜管理系统后端...")
+    port = int(os.environ.get('PORT', 5002))
+    print("🔑 启动智能钥匙柜管理系统后端 (简化版)...")
     print("📱 前端地址: http://localhost:3000")
-    print("🔧 后端API: http://localhost:8000")
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    print(f"🔧 后端API: http://localhost:{port}")
+    app.run(host="0.0.0.0", port=port, debug=True)

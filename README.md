@@ -3,14 +3,14 @@
 基于 Flask + Vue 3 的智能钥匙柜管理系统，覆盖钥匙借用/归还、用户与钥匙管理、借用记录追踪，并提供管理后台。
 
 ## 功能亮点
-- 借钥匙、还钥匙全流程
-- 借用理由必填与借用记录追踪
-- 用户与钥匙信息管理
-- 实时借用状态展示
-- 管理后台（Flask-Admin）
+- 借钥匙流程：支持扫码/输入学号借用，强制填写借用理由
+- 还钥匙流程：简化操作，支持一键查看所有未归还钥匙并快速归还
+- 实时追踪：借用记录实时更新，状态一目了然
+- 用户与钥匙管理：完整的增删改查功能
+- 管理后台：基于 Flask-Admin 的强大后台管理系统
 
 ## 技术栈
-- 后端：Flask、SQLAlchemy、Flask-Admin、SQLite（默认）
+- 后端：Flask、SQLAlchemy、Flask-Admin、SQLite（默认）/ MySQL
 - 前端：Vue 3、Element Plus、Vue Router、Vite
 
 ## 目录结构
@@ -48,9 +48,9 @@
 ./start-new.sh
 ```
 默认端口：
-- 前端：http://localhost:3001
-- 后端：http://localhost:5001
-- 管理后台：http://localhost:5001/admin
+- 前端：http://localhost:3000
+- 后端：http://localhost:5002
+- 管理后台：http://localhost:5002/admin
 
 #### 简化版（内存数据）
 ```bash
@@ -64,7 +64,7 @@
 ```bash
 cd backend
 pip3 install -r requirements.txt
-PORT=5001 python3 app.py
+PORT=5002 python3 app.py
 ```
 
 #### 2) 后端（简化版）
@@ -96,12 +96,27 @@ DATABASE_URL=mysql+pymysql://用户名:密码@localhost:3306/数据库名?charse
 - `POST /api/user/:id/borrow` - 借钥匙
 - `POST /api/user/:id/return` - 还钥匙
 - `GET /api/user/borrow-records` - 借用记录
+- `GET /api/user/borrow-records/active` - 当前未归还记录
 
 ### 钥匙相关
 - `GET /api/key/` - 获取所有钥匙
 - `POST /api/key/` - 创建钥匙
 - `PUT /api/key/:id` - 更新钥匙
 - `DELETE /api/key/:id` - 删除钥匙
+
+## 版本控制与部署
+
+### 推送到 GitHub
+1. 在 GitHub 上创建一个新的空仓库
+2. 在本地初始化并推送：
+```bash
+git init
+git add .
+git commit -m "Initial commit: 智能钥匙柜管理系统 v1.0"
+git branch -M main
+git remote add origin https://github.com/你的用户名/你的仓库名.git
+git push -u origin main
+```
 
 ## 文档与测试数据
 - `QUICK_START.md`：启动与功能速览

@@ -166,7 +166,7 @@ export default {
     const submitting = ref(false)
 
     const currentPage = ref(1)
-    const pageSize = ref(6)
+    const pageSize = ref(12)
 
     const addForm = reactive({
       room: ''
@@ -402,15 +402,56 @@ export default {
 }
 
 .key-list {
-  max-width: 400px;
-  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  padding-bottom: 10px;
 }
 
 .pagination-container {
   flex-shrink: 0;
-  padding: 10px 20px 0;
+  padding: 10px 20px 20px;
   display: flex;
   justify-content: center;
+}
+
+/* 增强分页按钮样式 */
+:deep(.el-pagination.is-background .el-pager li:not(.is-disabled)) {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  font-size: 16px;
+  min-width: 40px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 8px;
+  margin: 0 5px;
+}
+
+:deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
+  background-color: #00ffff;
+  color: #000;
+  font-weight: bold;
+  border-color: #00ffff;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+:deep(.el-pagination.is-background .btn-prev),
+:deep(.el-pagination.is-background .btn-next) {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  min-width: 40px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+:deep(.el-pagination.is-background .btn-prev:disabled),
+:deep(.el-pagination.is-background .btn-next:disabled) {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #666;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .key-card {
@@ -418,12 +459,12 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 15px;
-  margin-bottom: 10px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
+  height: 100%;
 }
 
 .key-card:hover {

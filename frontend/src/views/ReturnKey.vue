@@ -32,57 +32,34 @@
         :rules="returnRules"
         class="return-form glass-form"
       >
-        <!-- 身份验证 -->
-        <div class="form-row">
-          <el-form-item prop="name" class="form-item">
-            <div class="input-wrapper">
-              <span class="input-icon">👤</span>
-              <el-input
-                v-model="returnForm.name"
-                placeholder="姓名 Name"
-                size="large"
-                @blur="searchUser"
-              />
-            </div>
-          </el-form-item>
-          
-          <el-form-item prop="studentId" class="form-item">
-            <div class="input-wrapper">
-              <span class="input-icon">🎫</span>
-              <el-input
-                v-model="returnForm.studentId"
-                placeholder="学号/工号 ID"
-                size="large"
-                @blur="searchUser"
-              />
-            </div>
-          </el-form-item>
-        </div>
-
         <!-- 借用记录 -->
-        <div class="borrowed-keys" v-if="borrowedKeys.length > 0">
+        <div class="borrowed-keys" v-if="loading || borrowedKeys.length > 0">
           <p class="section-title">
             <span class="title-icon">📋</span>
-            您的借用记录
+            请选择要归还的钥匙
           </p>
-          <div class="key-list">
+          <div class="key-list" v-loading="loading">
             <div 
-              v-for="key in borrowedKeys" 
-              :key="key.id"
+              v-for="record in borrowedKeys" 
+              :key="record.id"
               class="key-item"
-              :class="{ active: returnForm.keyId === key.id.toString() }"
-              @click="selectKeyToReturn(key)"
+              :class="{ active: returnForm.keyId === String(record.key.id) }"
+              @click="selectKeyToReturn(record)"
             >
               <div class="key-info">
-                <span class="room-number">{{ key.room }}号房间</span>
-                <span class="key-id">ID: {{ key.id }}</span>
+                <span class="room-number">{{ record.key.room }}号房间</span>
+                <span class="borrower-name">借用人: {{ record.user.name }}</span>
+                <span class="key-id">借用时间: {{ formatTime(record.borrow_time) }}</span>
               </div>
               <div class="select-icon">
-                {{ returnForm.keyId === key.id.toString() ? '✓' : '→' }}
+                {{ returnForm.keyId === String(record.key.id) ? '✓' : '→' }}
               </div>
               <div class="item-glow"></div>
             </div>
           </div>
+        </div>
+        <div v-else class="empty-state">
+          <p>当前没有待归还的钥匙</p>
         </div>
 
         <!-- 钥匙状态 -->
@@ -144,7 +121,7 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { ArrowLeft, RefreshLeft, Check } from '@element-plus/icons-vue'
 import { userAPI } from '../api'
@@ -159,12 +136,10 @@ export default {
   setup() {
     const returnFormRef = ref()
     const submitting = ref(false)
+    const loading = ref(false)
     const borrowedKeys = ref([])
-    const currentUser = ref(null)
 
     const returnForm = reactive({
-      name: '',
-      studentId: '',
       keyId: '',
       roomNumber: '',
       keyCondition: 'excellent',
@@ -174,12 +149,6 @@ export default {
     })
 
     const returnRules = {
-      name: [
-        { required: true, message: '请输入姓名', trigger: 'blur' }
-      ],
-      studentId: [
-        { required: true, message: '请输入学号/工号', trigger: 'blur' }
-      ],
       keyId: [
         { required: true, message: '请选择要归还的钥匙', trigger: 'change' }
       ],
@@ -191,37 +160,34 @@ export default {
       ]
     }
 
-    const searchUser = async () => {
-      if (!returnForm.name || !returnForm.studentId) return
-
+    const loadActiveRecords = async () => {
+      loading.value = true
       try {
-        const users = await userAPI.getUsers()
-        const user = users.find(u => 
-          u.name === returnForm.name && 
-          (u.id.toString() === returnForm.studentId || u.name === returnForm.name)
-        )
-
-        if (user && user.keys && user.keys.length > 0) {
-          currentUser.value = user
-          borrowedKeys.value = user.keys
-          ElMessage.success(`找到用户 ${user.name}，共借用 ${user.keys.length} 把钥匙`)
-        } else if (user) {
-          ElMessage.warning('该用户当前没有借用钥匙')
-          borrowedKeys.value = []
-        } else {
-          ElMessage.error('未找到匹配的用户信息')
-          borrowedKeys.value = []
-        }
+        const records = await userAPI.getActiveBorrowRecords()
+        borrowedKeys.value = records
       } catch (error) {
-        console.error('搜索用户失败:', error)
-        ElMessage.error('搜索用户失败')
+        console.error('加载借用记录失败:', error)
+        ElMessage.error('加载借用记录失败')
+      } finally {
+        loading.value = false
       }
     }
 
-    const selectKeyToReturn = (key) => {
-      returnForm.keyId = key.id.toString()
-      returnForm.roomNumber = key.room
-      ElMessage.success(`已选择归还 ${key.room} 号房间的钥匙`)
+    const selectKeyToReturn = (record) => {
+      if (record && record.key) {
+        returnForm.keyId = String(record.key.id)
+        returnForm.roomNumber = record.key.room
+      }
+    }
+
+    const formatTime = (timeStr) => {
+      if (!timeStr) return ''
+      return new Date(timeStr).toLocaleString('zh-CN', {
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
     }
 
     const submitForm = async () => {
@@ -230,15 +196,16 @@ export default {
       try {
         await returnFormRef.value.validate()
         
-        if (!currentUser.value) {
-          ElMessage.error('请先验证身份信息')
+        const record = borrowedKeys.value.find(r => String(r.key.id) === returnForm.keyId)
+        if (!record) {
+          ElMessage.error('记录无效')
           return
         }
 
         submitting.value = true
 
         // 归还钥匙
-        await userAPI.returnKey(currentUser.value.id, parseInt(returnForm.keyId))
+        await userAPI.returnKey(record.user.id, parseInt(returnForm.keyId))
 
         ElMessage.success('钥匙归还成功！')
         
@@ -267,10 +234,8 @@ export default {
         returnFormRef.value.resetFields()
       }
       borrowedKeys.value = []
-      currentUser.value = null
+      loadActiveRecords()
       Object.assign(returnForm, {
-        name: '',
-        studentId: '',
         keyId: '',
         roomNumber: '',
         keyCondition: 'excellent',
@@ -314,15 +279,20 @@ export default {
       }, 2000)
     }
 
+    onMounted(() => {
+      loadActiveRecords()
+    })
+
     return {
       returnFormRef,
       returnForm,
       returnRules,
       submitting,
+      loading,
       borrowedKeys,
-      currentUser,
-      searchUser,
+      loadActiveRecords,
       selectKeyToReturn,
+      formatTime,
       submitForm,
       resetForm
     }
@@ -805,5 +775,26 @@ export default {
     font-size: 28px;
     margin: 0 3px;
   }
+}
+
+.borrower-name {
+  color: #00ffff;
+  font-size: 14px;
+  font-weight: 500;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #aaa;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.empty-state p {
+  font-size: 16px;
+  margin: 0;
 }
 </style>

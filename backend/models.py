@@ -1,5 +1,8 @@
 from extensions import db
-from datetime import datetime
+from datetime import datetime, timedelta
+
+def get_beijing_time():
+    return datetime.utcnow() + timedelta(hours=8)
 
 #多对多中间表
 JNFLSIC_keys = db.Table('jnflsic_keys',
@@ -56,7 +59,7 @@ class BorrowRecord(db.Model):
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 	key_id = db.Column(db.Integer, db.ForeignKey('key.id'), nullable=False)
 	reason = db.Column(db.Text, nullable=False)  # 借用理由
-	borrow_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)  # 借用时间
+	borrow_time = db.Column(db.DateTime, nullable=False, default=get_beijing_time)  # 借用时间
 	return_time = db.Column(db.DateTime)  # 归还时间，为空表示未归还
 	status = db.Column(db.String(20), nullable=False, default='borrowed')  # borrowed, returned
 	
